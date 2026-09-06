@@ -1,0 +1,914 @@
+<!DOCTYPE html>
+<html lang="ru" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>STUDIO COSMOS — 3D Печать | Эпоксидная Смола | Математика | Школьные Проекты</title>
+    <style>
+        /* ТЁМНАЯ ТЕМА */
+        [data-theme="dark"] {
+            --bg-main: #050814;
+            --bg-card: rgba(15, 23, 42, 0.85);
+            --bg-card-hover: rgba(30, 41, 59, 0.95);
+            --header-bg: rgba(5, 8, 20, 0.85);
+            --accent-blue: #38bdf8;
+            --accent-glow: rgba(56, 189, 248, 0.35);
+            --text-light: #f8fafc;
+            --text-muted: #94a3b8;
+            --border-color: rgba(255, 255, 255, 0.12);
+            --btn-bg: rgba(255, 255, 255, 0.08);
+            --solar-border: rgba(255, 255, 255, 0.15);
+        }
+
+        /* СВЕТЛАЯ ТЕМА */
+        [data-theme="light"] {
+            --bg-main: #7dd3fc;
+            --bg-card: rgba(255, 255, 255, 0.92);
+            --bg-card-hover: rgba(255, 255, 255, 0.98);
+            --header-bg: rgba(186, 230, 253, 0.9);
+            --accent-blue: #0284c7;
+            --accent-glow: rgba(2, 132, 199, 0.25);
+            --text-light: #0f172a;
+            --text-muted: #334155;
+            --border-color: rgba(0, 0, 0, 0.12);
+            --btn-bg: rgba(255, 255, 255, 0.4);
+            --solar-border: rgba(2, 132, 199, 0.2);
+        }
+
+        [data-theme="light"] .solar-system-vertical {
+            display: none !important;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+        }
+
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-light);
+            overflow-x: hidden;
+            position: relative;
+            min-height: 100vh;
+        }
+
+        .bg-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* СОЛНЕЧНАЯ СИСТЕМА */
+        .solar-system-vertical {
+            position: fixed;
+            right: 180px; 
+            top: 420px;
+            width: 340px;
+            height: 340px;
+            z-index: 10;
+            border-radius: 50%;
+            background: radial-gradient(circle at center, var(--accent-glow) 0%, rgba(0, 0, 0, 0) 70%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+            border: 1px solid var(--solar-border);
+            backdrop-filter: blur(6px);
+        }
+
+        .solar-system-vertical:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 60px var(--accent-glow);
+            border-color: rgba(56, 189, 248, 0.5);
+        }
+
+        .sun-vert {
+            width: 46px;
+            height: 46px;
+            background: radial-gradient(circle, #fff700, #ff5500);
+            border-radius: 50%;
+            box-shadow: 0 0 30px #ffaa00;
+            position: absolute;
+            z-index: 2;
+            transition: transform 0.4s ease, box-shadow 0.4s ease;
+        }
+
+        .solar-system-vertical:hover .sun-vert {
+            transform: scale(1.25);
+            box-shadow: 0 0 50px #ffaa00;
+        }
+
+        .orbit-vert {
+            position: absolute;
+            border: 1px dashed var(--border-color);
+            border-radius: 50%;
+            animation: spinVert linear infinite;
+            transition: width 0.5s ease, height 0.5s ease, border-color 0.5s ease;
+        }
+
+        .orbit-v1 { width: 95px; height: 95px; animation-duration: 6s; }
+        .orbit-v2 { width: 150px; height: 150px; animation-duration: 10s; }
+        .orbit-v3 { width: 205px; height: 205px; animation-duration: 16s; }
+        .orbit-v4 { width: 265px; height: 265px; animation-duration: 24s; }
+
+        .solar-system-vertical:hover .orbit-v1 { width: 115px; height: 115px; border-color: rgba(56, 189, 248, 0.4); }
+        .solar-system-vertical:hover .orbit-v2 { width: 180px; height: 180px; border-color: rgba(74, 222, 128, 0.4); }
+        .solar-system-vertical:hover .orbit-v3 { width: 245px; height: 245px; border-color: rgba(244, 63, 94, 0.4); }
+        .solar-system-vertical:hover .orbit-v4 { width: 310px; height: 310px; border-color: rgba(251, 191, 36, 0.4); }
+
+        .planet-vert {
+            position: absolute;
+            top: -7px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-radius: 50%;
+            transition: transform 0.4s ease, box-shadow 0.4s ease;
+        }
+
+        .planet-v1 { width: 9px; height: 9px; background: #38bdf8; box-shadow: 0 0 6px #38bdf8; }
+        .planet-v2 { width: 14px; height: 14px; background: #4ade80; box-shadow: 0 0 8px #4ade80; }
+        .planet-v3 { width: 12px; height: 12px; background: #f43f5e; box-shadow: 0 0 6px #f43f5e; }
+        
+        .planet-v4 {
+            width: 16px;
+            height: 16px;
+            background: #fbbf24;
+            box-shadow: 0 0 8px #fbbf24;
+            position: relative;
+        }
+        .planet-v4::after {
+            content: '';
+            position: absolute;
+            top: 50%; left: 50%;
+            width: 26px; height: 8px;
+            border: 2px solid rgba(251, 191, 36, 0.8);
+            border-radius: 50%;
+            transform: translate(-50%, -50%) rotate(-20deg);
+            transition: all 0.4s ease;
+        }
+
+        .solar-system-vertical:hover .planet-vert {
+            transform: translateX(-50%) scale(1.4);
+        }
+
+        @keyframes spinVert {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        /* ШАПКА */
+        header {
+            position: sticky;
+            top: 0;
+            background: var(--header-bg);
+            backdrop-filter: blur(18px);
+            border-bottom: 1px solid var(--border-color);
+            z-index: 100;
+            padding: 14px 25px;
+        }
+
+        .header-container {
+            max-width: 1250px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 22px;
+            font-weight: 800;
+            letter-spacing: 1px;
+            cursor: pointer;
+        }
+
+        .logo span { color: var(--accent-blue); }
+
+        nav { display: flex; gap: 8px; align-items: center; }
+
+        .nav-btn {
+            background: transparent;
+            color: var(--text-muted);
+            border: 1px solid transparent;
+            padding: 9px 15px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.25s ease;
+        }
+
+        .nav-btn:hover {
+            color: var(--text-light);
+            background: var(--btn-bg);
+        }
+
+        .nav-btn.active {
+            background: var(--btn-bg);
+            color: var(--accent-blue);
+            border-color: var(--accent-blue);
+            box-shadow: 0 0 12px var(--accent-glow);
+        }
+
+        .theme-toggle-btn {
+            background: var(--btn-bg);
+            border: 1px solid var(--border-color);
+            color: var(--text-light);
+            padding: 8px 14px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-left: 10px;
+            font-weight: 600;
+        }
+
+        .theme-toggle-btn:hover { border-color: var(--accent-blue); }
+
+        /* КОНТЕНТ */
+        main {
+            max-width: 1100px;
+            margin: 30px auto;
+            padding: 0 20px;
+            position: relative;
+            z-index: 5;
+        }
+
+        .section-page {
+            display: none;
+            animation: fadeIn 0.35s ease-out;
+        }
+
+        .section-page.active { display: block; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(12px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .page-header { margin-bottom: 25px; }
+
+        .page-title {
+            font-size: 32px;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .page-subtitle {
+            color: var(--text-muted);
+            margin-top: 8px;
+            font-size: 16px;
+        }
+
+        .btn-back {
+            background: var(--btn-bg);
+            color: var(--accent-blue);
+            border: 1px solid var(--border-color);
+            padding: 8px 16px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 15px;
+        }
+
+        .btn-back:hover { background: var(--accent-glow); }
+
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 25px;
+        }
+
+        .category-card {
+            background: var(--bg-card);
+            border-radius: 20px;
+            border: 1px solid var(--border-color);
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+            transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .category-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--accent-blue);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15), 0 0 20px var(--accent-glow);
+        }
+
+        .preview-box {
+            width: 100%;
+            height: 220px;
+            background: rgba(0, 0, 0, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .preview-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.4s ease;
+        }
+
+        /* ОБНОВЛЕННОЕ ПОЗИЦИОНИРОВАНИЕ ИЗОБРАЖЕНИЙ (СМЕЩЕНО ВЫШЕ) */
+        .img-human-full {
+            object-position: center 25%; /* Смещено выше, чтобы лучше сфокусировать голову и туловище */
+        }
+
+        .img-human-mini {
+            object-position: center 30%; /* Смещено выше, чтобы фигурка помещалась полностью */
+        }
+
+        .category-card:hover .preview-img {
+            transform: scale(1.06);
+        }
+
+        .preview-badge {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background: rgba(15, 23, 42, 0.75);
+            color: var(--accent-blue);
+            border: 1px solid var(--border-color);
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 700;
+            backdrop-filter: blur(4px);
+        }
+
+        .card-body {
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+        }
+
+        .card-title {
+            font-size: 19px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .card-desc {
+            font-size: 14px;
+            color: var(--text-muted);
+            line-height: 1.5;
+            margin-bottom: 20px;
+            flex-grow: 1;
+        }
+
+        .btn-view {
+            background: var(--accent-blue);
+            color: #ffffff;
+            border: none;
+            padding: 12px;
+            border-radius: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-view:hover {
+            opacity: 0.9;
+            box-shadow: 0 0 15px var(--accent-glow);
+        }
+
+        .info-banner {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 25px;
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .status-dot {
+            width: 12px;
+            height: 12px;
+            background: #22c55e;
+            border-radius: 50%;
+            box-shadow: 0 0 10px #22c55e;
+            display: inline-block;
+            margin-right: 6px;
+        }
+
+        /* МОДАЛЬНОЕ ОКНО */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal-overlay.active { display: flex; }
+
+        .modal-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 24px;
+            max-width: 650px;
+            width: 100%;
+            overflow: hidden;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+        }
+
+        .modal-header {
+            padding: 20px 25px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-close {
+            background: var(--btn-bg);
+            border: none;
+            color: var(--text-light);
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 18px;
+        }
+
+        .modal-body { padding: 25px; }
+
+        .modal-gallery {
+            width: 100%;
+            height: 320px;
+            background: rgba(0,0,0,0.2);
+            border-radius: 16px;
+            overflow: hidden;
+            margin-bottom: 20px;
+            border: 1px solid var(--border-color);
+        }
+
+        .modal-gallery img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .tutor-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 24px;
+            padding: 35px;
+            display: grid;
+            grid-template-columns: 200px 1fr;
+            gap: 30px;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .tutor-photo {
+            width: 200px;
+            height: 200px;
+            border-radius: 20px;
+            background: var(--btn-bg);
+            border: 2px dashed var(--border-color);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        @media (max-width: 1100px) {
+            .solar-system-vertical { display: none; }
+            .tutor-card { grid-template-columns: 1fr; text-align: center; }
+            .tutor-photo { margin: 0 auto; }
+            nav { gap: 4px; }
+            .nav-btn { padding: 7px 10px; font-size: 12px; }
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="themeCanvas" class="bg-canvas"></canvas>
+
+    <div class="solar-system-vertical" title="Солнечная система STUDIO COSMOS">
+        <div class="sun-vert"></div>
+        <div class="orbit-vert orbit-v1"><div class="planet-vert planet-v1"></div></div>
+        <div class="orbit-vert orbit-v2"><div class="planet-vert planet-v2"></div></div>
+        <div class="orbit-vert orbit-v3"><div class="planet-vert planet-v3"></div></div>
+        <div class="orbit-vert orbit-v4"><div class="planet-vert planet-v4"></div></div>
+    </div>
+
+    <header>
+        <div class="header-container">
+            <div class="logo" onclick="openMainSection('print-page')">🚀 STUDIO <span>COSMOS</span></div>
+            <nav>
+                <button class="nav-btn active" id="btn-print" onclick="openMainSection('print-page')">🖨 3D-Печать</button>
+                <button class="nav-btn" id="btn-resin" onclick="openMainSection('resin-page')">💎 Смола</button>
+                <button class="nav-btn" id="btn-math" onclick="openMainSection('math-page')">📐 Математика</button>
+                <button class="nav-btn" id="btn-projects" onclick="openMainSection('projects-page')">📂 Школьные проекты</button>
+                
+                <button class="theme-toggle-btn" onclick="toggleTheme()" id="themeBtn">
+                    <span id="themeIcon">☀️</span> <span id="themeText" style="font-size:13px;">Светлая</span>
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+
+        <!-- 3D-ПЕЧАТЬ -->
+        <section id="print-page" class="section-page active">
+            <div class="page-header">
+                <h1 class="page-title">3D-Печать и Изготовление</h1>
+                <p class="page-subtitle">Выберите интересующий подраздел для просмотра каталога и примеров работ:</p>
+            </div>
+
+            <div class="products-grid">
+                <!-- Разное -->
+                <div class="category-card">
+                    <div class="preview-box">
+                        <img src="разное.jpg" alt="Разное" class="preview-img">
+                        <div class="preview-badge">Подраздел</div>
+                    </div>
+                    <div class="card-body">
+                        <div class="card-title">Разное</div>
+                        <div class="card-desc">Сувениры, художественные модели, подвижные игрушки и оригинальные аксессуары.</div>
+                        <button class="btn-view" onclick="openCategoryPage('misc')">Перейти &rarr;</button>
+                    </div>
+                </div>
+
+                <!-- Производственное -->
+                <div class="category-card">
+                    <div class="preview-box">
+                        <img src="производственное.jpg" alt="Производственное" class="preview-img">
+                        <div class="preview-badge">Промышленное</div>
+                    </div>
+                    <div class="card-body">
+                        <div class="card-title">Производственное</div>
+                        <div class="card-desc">Инженерная печать, крупногабаритные элементы, ракетно-технические сборки и корпуса.</div>
+                        <button class="btn-view" onclick="openCategoryPage('industrial')">Перейти &rarr;</button>
+                    </div>
+                </div>
+
+                <!-- Человек в полный рост -->
+                <div class="category-card">
+                    <div class="preview-box">
+                        <img src="человек.jpg" alt="Человек в полный рост" class="preview-img img-human-full">
+                        <div class="preview-badge">Подраздел</div>
+                    </div>
+                    <div class="card-body">
+                        <div class="card-title">Человек в полный рост</div>
+                        <div class="card-desc">Анатомические макеты, ростовые скульптуры и персонализированные детали.</div>
+                        <button class="btn-view" onclick="openCategoryPage('human-full')">Перейти &rarr;</button>
+                    </div>
+                </div>
+
+                <!-- Мини фигурка человека -->
+                <div class="category-card">
+                    <div class="preview-box">
+                        <img src="минифигуркачеловека.jpg" alt="Мини фигурка человека" class="preview-img img-human-mini">
+                        <div class="preview-badge">Подраздел</div>
+                    </div>
+                    <div class="card-body">
+                        <div class="card-title">Мини фигурка человека</div>
+                        <div class="card-desc">Высокоточная фотополимерная печать коллекционных персонализированных фигурок.</div>
+                        <button class="btn-view" onclick="openCategoryPage('human-mini')">Перейти &rarr;</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ЭПОКСИДНАЯ СМОЛА -->
+        <section id="resin-page" class="section-page">
+            <div class="page-header">
+                <h1 class="page-title">Изделия из Эпоксидной Смолы</h1>
+                <p class="page-subtitle">Дизайнерские изделия ручной работы:</p>
+            </div>
+
+            <div class="products-grid">
+                <div class="category-card">
+                    <div class="preview-box">
+                        <img src="шахматы.jpg" alt="Шахматы" class="preview-img">
+                        <div class="preview-badge">Эксклюзив</div>
+                    </div>
+                    <div class="card-body">
+                        <div class="card-title">Шахматы</div>
+                        <div class="card-desc">Коллекционные шахматные комплекты из художественной смолы с добавлением потали.</div>
+                        <button class="btn-view" onclick="openCategoryPage('chess')">Перейти &rarr;</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- МАТЕМАТИКА -->
+        <section id="math-page" class="section-page">
+            <div class="page-header">
+                <h1 class="page-title">Курсы по Математике и Репетиторство</h1>
+                <p class="page-subtitle">Подготовка к ОГЭ/ЕГЭ и индивидуальное обучение:</p>
+            </div>
+
+            <div class="tutor-card">
+                <div class="tutor-photo">
+                    <svg width="48" height="48" fill="currentColor" viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+                    <span style="font-size:11px; margin-top:8px;">[ Фото ]</span>
+                </div>
+                <div>
+                    <h2 style="font-size: 26px; margin-bottom: 8px;">Визитка Преподавателя</h2>
+                    <p style="color: var(--accent-blue); font-weight:600; margin-bottom: 12px;">Индивидуальное обучение</p>
+                    <p style="color: var(--text-muted); font-size: 14px; line-height: 1.6; margin-bottom: 20px;">
+                        Помогаю освоить школьную программу с 5 по 11 класс и сдать экзамены без стресса.
+                    </p>
+                    <button class="btn-view" style="display:inline-flex;" onclick="alert('Для записи свяжитесь с нами!')">Записаться на урок</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ШКОЛЬНЫЕ ПРОЕКТЫ -->
+        <section id="projects-page" class="section-page">
+            <div class="page-header">
+                <h1 class="page-title">📁 Выполнение и Сопровождение Школьных Проектов</h1>
+                <p class="page-subtitle">Комплексная помощь в создании индивидуальных исследовательских и 3D-проектов:</p>
+            </div>
+
+            <div class="products-grid">
+                <div class="category-card">
+                    <div class="preview-box">
+                        <svg width="40" height="40" fill="currentColor" viewBox="0 0 24 24" style="margin: 90px auto; display:block;"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+                        <div class="preview-badge">Услуга</div>
+                    </div>
+                    <div class="card-body">
+                        <div class="card-title">Сопровождение проектов</div>
+                        <div class="card-desc">Помощь в выборе темы, составлении структуры, оформлении презентации и подготовке к защите.</div>
+                        <button class="btn-view" onclick="openCategoryPage('project-support')">Перейти и узнать детали &rarr;</button>
+                    </div>
+                </div>
+
+                <!-- ДОБАВЛЕНО ФОТО В ПРИМЕРЫ ВЫПОЛНЕННЫХ РАБОТ -->
+                <div class="category-card">
+                    <div class="preview-box">
+                        <img src="пример_работы.jpg" alt="Примеры выполненных работ" class="preview-img">
+                        <div class="preview-badge">Портфолио</div>
+                    </div>
+                    <div class="card-body">
+                        <div class="card-title">Примеры выполненных работ</div>
+                        <div class="card-desc">Галерея готовых проектов: инженерные электронные модули, ракетно-космические макеты и 3D-моделирование.</div>
+                        <button class="btn-view" onclick="openCategoryPage('project-examples')">Перейти и посмотреть &rarr;</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ДИНАМИЧЕСКАЯ СТРАНИЦА -->
+        <section id="category-detail-page" class="section-page">
+            <button class="btn-back" onclick="goBackToMain()">&larr; Назад</button>
+
+            <div class="page-header">
+                <h1 class="page-title" id="cat-title">Название подраздела</h1>
+                <p class="page-subtitle" id="cat-desc">Описание подраздела</p>
+            </div>
+
+            <div class="info-banner">
+                <div>
+                    <span class="status-dot"></span> <strong>Статус:</strong> Доступно для заказа и консультации.
+                </div>
+            </div>
+
+            <h2 style="font-size: 20px; margin-bottom: 20px;">Позиции в категории:</h2>
+            <div class="products-grid" id="cat-products-grid"></div>
+        </section>
+
+    </main>
+
+    <!-- МОДАЛЬНОЕ ОКНО -->
+    <div class="modal-overlay" id="productModal">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3 id="modalProductTitle">Просмотр</h3>
+                <button class="modal-close" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="modal-gallery">
+                    <img id="modalImg" src="" alt="Детали позиции">
+                </div>
+                <p id="modalProductDesc" style="color: var(--text-muted); line-height: 1.6; margin-bottom: 20px;"></p>
+                <button class="btn-view" style="width:100%;" onclick="alert('Заявка принята!')">Заказать / Консультация</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const categoriesData = {
+            'misc': {
+                title: '3D-Печать: Разное',
+                desc: 'Сувениры, художественные детали и кастомные изделия.',
+                items: [
+                    { name: 'Подвижный шарнирный кот', desc: 'Печать детализированных шарнирных фигур с последующей художественной росписью.', img: 'разное.jpg', status: 'В наличии', posClass: '' }
+                ]
+            },
+            'industrial': {
+                title: '3D-Печать: Производственное',
+                desc: 'Промышленное прототипирование, технические узлы и сложные сборки.',
+                items: [
+                    { name: 'Технический корпус / Ракета-носитель', desc: 'Многокомпонентная печать из прочных инженерных пластиков (PETG/ABS) с интеграцией металлических направляющих.', img: 'производственное.jpg', status: 'Под заказ', posClass: '' }
+                ]
+            },
+            'human-full': {
+                title: '3D-Печать: Человек в полный рост',
+                desc: 'Ростовые макеты и анатомические элементы.',
+                items: [
+                    { name: 'Анатомический макет головы и кистей', desc: 'Точная 3D-печать элементов тела для выставочных макетов и демонстрационных стендов.', img: 'человек.jpg', status: 'Под заказ', posClass: 'img-human-full' }
+                ]
+            },
+            'human-mini': {
+                title: '3D-Печать: Мини фигурка',
+                desc: 'Высокоточная фотополимерная печать коллекционных фигурок.',
+                items: [
+                    { name: 'Коллекционная фигурка врача', desc: 'Детализированная фотополимерная печать персональных фигурок людей по 3D-скану или фото.', img: 'минифигуркачеловека.jpg', status: 'В наличии', posClass: 'img-human-mini' }
+                ]
+            },
+            'chess': {
+                title: 'Эпоксидная смола: Шахматы',
+                desc: 'Эксклюзивные шахматы ручной работы из смолы.',
+                items: [
+                    { name: 'Изумрудный шахматный набор', desc: 'Фигуры из прозрачной эпоксидной смолы с золотой поталью на деревянной доске.', img: 'шахматы.jpg', status: 'В наличии', posClass: '' }
+                ]
+            },
+            'project-support': {
+                title: 'Школьные проекты: Сопровождение',
+                desc: 'Полный цикл помощи школьникам при подготовке проектов.',
+                items: [
+                    { name: 'Консультация и подбор темы', desc: 'Поможем выбрать актуальную тему для 5-11 классов.', img: 'производственное.jpg', status: 'Доступно', posClass: '' }
+                ]
+            },
+            'project-examples': {
+                title: 'Школьные проекты: Примеры работ',
+                desc: 'Образцы ранее успешно защищенных школьных проектов.',
+                items: [
+                    { name: 'Проект «Инженерно-электронный макет и ракетно-космический комплекс»', desc: 'Разработка печатного 3D-макета ракеты, программирование электроники и сборка плавающей платы.', img: 'пример_работы.jpg', status: 'Пример', posClass: '' }
+                ]
+            }
+        };
+
+        let currentMainPage = 'print-page';
+
+        function openMainSection(pageId) {
+            currentMainPage = pageId;
+            document.querySelectorAll('.section-page').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+
+            document.getElementById(pageId).classList.add('active');
+            if(pageId === 'print-page') document.getElementById('btn-print').classList.add('active');
+            if(pageId === 'resin-page') document.getElementById('btn-resin').classList.add('active');
+            if(pageId === 'math-page') document.getElementById('btn-math').classList.add('active');
+            if(pageId === 'projects-page') document.getElementById('btn-projects').classList.add('active');
+        }
+
+        function openCategoryPage(catKey) {
+            const data = categoriesData[catKey];
+            if (!data) return;
+
+            document.getElementById('cat-title').innerText = data.title;
+            document.getElementById('cat-desc').innerText = data.desc;
+
+            const grid = document.getElementById('cat-products-grid');
+            grid.innerHTML = data.items.map(item => `
+                <div class="category-card">
+                    <div class="preview-box">
+                        <img src="${item.img}" alt="${item.name}" class="preview-img ${item.posClass || ''}">
+                        <div class="preview-badge">${item.status}</div>
+                    </div>
+                    <div class="card-body">
+                        <div class="card-title">${item.name}</div>
+                        <div class="card-desc">${item.desc}</div>
+                        <button class="btn-view" onclick="openProductModal('${item.name}', '${item.desc}', '${item.img}')">Открыть и посмотреть &rarr;</button>
+                    </div>
+                </div>
+            `).join('');
+
+            document.querySelectorAll('.section-page').forEach(p => p.classList.remove('active'));
+            document.getElementById('category-detail-page').classList.add('active');
+        }
+
+        function goBackToMain() { openMainSection(currentMainPage); }
+        
+        function openProductModal(title, desc, imgSrc) {
+            document.getElementById('modalProductTitle').innerText = title;
+            document.getElementById('modalProductDesc').innerText = desc;
+            document.getElementById('modalImg').src = imgSrc;
+            document.getElementById('productModal').classList.add('active');
+        }
+        
+        function closeModal() { document.getElementById('productModal').classList.remove('active'); }
+
+        let isDarkTheme = true;
+        function toggleTheme() {
+            isDarkTheme = !isDarkTheme;
+            const html = document.documentElement;
+            const icon = document.getElementById('themeIcon');
+            const text = document.getElementById('themeText');
+
+            if (isDarkTheme) {
+                html.setAttribute('data-theme', 'dark');
+                icon.innerText = '☀️';
+                text.innerText = 'Светлая';
+            } else {
+                html.setAttribute('data-theme', 'light');
+                icon.innerText = '🌙';
+                text.innerText = 'Тёмная';
+            }
+        }
+
+        const canvas = document.getElementById('themeCanvas');
+        const ctx = canvas.getContext('2d');
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        const stars = Array.from({length: 220}, () => ({
+            x: Math.random() * canvas.width,
+            y: Math.random() * canvas.height,
+            radius: Math.random() * 1.5,
+            alpha: Math.random(),
+            speed: Math.random() * 0.02 + 0.005
+        }));
+
+        const clouds = Array.from({length: 14}, () => ({
+            x: Math.random() * canvas.width,
+            y: Math.random() * (canvas.height * 0.6),
+            size: Math.random() * 70 + 90,
+            speed: Math.random() * 0.4 + 0.15,
+            opacity: Math.random() * 0.3 + 0.6
+        }));
+
+        function drawScene() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            if (isDarkTheme) {
+                stars.forEach(star => {
+                    star.alpha += star.speed;
+                    if (star.alpha > 1 || star.alpha < 0) star.speed = -star.speed;
+                    ctx.beginPath();
+                    ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
+                    ctx.fillStyle = `rgba(255, 255, 255, ${Math.abs(star.alpha)})`;
+                    ctx.fill();
+                });
+            } else {
+                ctx.beginPath();
+                ctx.arc(140, 110, 60, 0, Math.PI * 2);
+                ctx.fillStyle = 'rgba(253, 224, 71, 0.8)';
+                ctx.fill();
+                ctx.beginPath();
+                ctx.arc(140, 110, 85, 0, Math.PI * 2);
+                ctx.fillStyle = 'rgba(253, 224, 71, 0.3)';
+                ctx.fill();
+
+                clouds.forEach(cloud => {
+                    cloud.x += cloud.speed;
+                    if (cloud.x - cloud.size * 2 > canvas.width) cloud.x = -cloud.size * 2;
+
+                    ctx.fillStyle = `rgba(255, 255, 255, ${cloud.opacity})`;
+                    ctx.beginPath();
+                    ctx.arc(cloud.x, cloud.y, cloud.size * 0.5, 0, Math.PI * 2);
+                    ctx.arc(cloud.x + cloud.size * 0.35, cloud.y - cloud.size * 0.25, cloud.size * 0.4, 0, Math.PI * 2);
+                    ctx.arc(cloud.x + cloud.size * 0.7, cloud.y, cloud.size * 0.45, 0, Math.PI * 2);
+                    ctx.fill();
+                });
+            }
+
+            requestAnimationFrame(drawScene);
+        }
+        drawScene();
+    </script>
+</body>
+</html>
