@@ -1,770 +1,378 @@
 <!DOCTYPE html>
-<html lang="ru" data-theme="dark">
+<html lang="ru" data-theme="kvantum-light">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>STUDIO COSMOS — 3D Печать | Эпоксидная Смола | Обучение и Проекты</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Омниссия — 3D Печать, Эпоксидная Смола, Обучение</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet" />
     <style>
-        [data-theme="dark"] {
-            --bg-main: #050814;
-            --bg-card: rgba(15, 23, 42, 0.85);
-            --bg-card-hover: rgba(30, 41, 59, 0.95);
-            --header-bg: rgba(5, 8, 20, 0.92);
-            --accent-blue: #38bdf8;
-            --accent-glow: rgba(56, 189, 248, 0.35);
-            --text-light: #f8fafc;
-            --text-muted: #94a3b8;
-            --border-color: rgba(255, 255, 255, 0.12);
-            --btn-bg: rgba(255, 255, 255, 0.08);
-            --wb-purple: #cb11ab;
+        /* --- ПЕРЕМЕННЫЕ (светлая тема kvantum-light) --- */
+        :root {
+            --bg-main: #f4f7fc;
+            --bg-card: #ffffff;
+            --bg-card-hover: #f1f5f9;
+            --header-bg: rgba(255, 255, 255, 0.95);
+            --accent-blue: #2563eb;
+            --accent-purple: #7c3aed;
+            --accent-glow: rgba(37, 99, 235, 0.2);
+            --text-light: #0b1a33;
+            --text-muted: #4b5e7a;
+            --border-color: #dce3ef;
+            --btn-bg: #f1f5f9;
+            --shadow-card: 0 12px 40px rgba(0, 0, 0, 0.06);
+            --font: 'Inter', sans-serif;
         }
 
-        [data-theme="light"] {
-            --bg-main: #7dd3fc;
-            --bg-card: rgba(255, 255, 255, 0.92);
-            --bg-card-hover: rgba(255, 255, 255, 0.98);
-            --header-bg: rgba(186, 230, 253, 0.95);
-            --accent-blue: #0284c7;
-            --accent-glow: rgba(2, 132, 199, 0.25);
-            --text-light: #0f172a;
-            --text-muted: #334155;
-            --border-color: rgba(0, 0, 0, 0.12);
-            --btn-bg: rgba(255, 255, 255, 0.4);
-            --wb-purple: #cb11ab;
-        }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
-            -webkit-tap-highlight-color: transparent;
-        }
-
+        * { margin:0; padding:0; box-sizing:border-box; transition: background-color 0.3s, color 0.3s, border-color 0.3s, transform 0.2s; -webkit-tap-highlight-color:transparent; }
         body {
+            font-family: var(--font);
             background-color: var(--bg-main);
             color: var(--text-light);
             overflow-x: hidden;
-            position: relative;
             min-height: 100vh;
+            line-height: 1.5;
         }
-
-        .bg-canvas {
-            position: fixed;
-            top: 0; left: 0;
-            width: 100vw; height: 100vh;
-            pointer-events: none;
-            z-index: 0;
-        }
-
-        /* СОЛНЕЧНАЯ СИСТЕМА ДЛЯ ПК (ИНТЕРАКТИВНАЯ, 3D, НА АНГЛИЙСКОМ) */
-        .solar-system-wrapper {
-            position: fixed;
-            right: 40px; 
-            top: 50%;
-            transform: translateY(-50%);
-            width: 360px; 
-            height: 520px;
-            z-index: 10;
-            perspective: 900px;
-            pointer-events: auto;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .solar-system {
-            position: relative;
-            width: 100%;
-            height: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transform-style: preserve-3d;
-            transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1);
-            cursor: pointer;
-        }
-
-        .solar-system-wrapper:hover .solar-system {
-            transform: rotateX(55deg) scale(1.15);
-        }
-
-        .sun-body {
-            position: absolute;
-            width: 48px; height: 48px;
-            background: radial-gradient(circle at 35% 35%, #fff7ad, #ffa500 50%, #ff4500 100%);
-            border-radius: 50%;
-            box-shadow: 0 0 35px #ff8c00, 0 0 60px rgba(255, 140, 0, 0.6);
-            z-index: 5;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: transform 0.5s ease, box-shadow 0.5s ease;
-        }
-
-        .solar-system-wrapper:hover .sun-body {
-            transform: scale(1.25) translateZ(20px);
-            box-shadow: 0 0 50px #ffaa00, 0 0 90px rgba(255, 170, 0, 0.8);
-        }
-
-        .planet-label {
-            position: absolute;
-            font-size: 9px;
-            font-weight: 800;
-            letter-spacing: 0.5px;
-            color: #ffffff;
-            text-shadow: 0 0 4px #000, 0 0 8px #000;
-            pointer-events: none;
-            opacity: 0.4;
-            transition: opacity 0.4s ease, transform 0.4s ease, font-size 0.4s ease;
-            white-space: nowrap;
-            text-transform: uppercase;
-        }
-
-        .solar-system-wrapper:hover .planet-label {
-            opacity: 1;
-            font-size: 11px;
-            transform: rotateX(-55deg) translateY(-14px);
-        }
-
-        .sun-label { top: -18px; color: #ffe600; }
-
-        .orbit {
-            position: absolute;
-            border: 1px dashed var(--border-color);
-            border-radius: 50%;
-            transform-style: preserve-3d;
-            animation: spinOrbit linear infinite;
-            transition: border-color 0.5s ease;
-        }
-
-        .solar-system-wrapper:hover .orbit {
-            border-color: rgba(56, 189, 248, 0.4);
-            border-style: solid;
-        }
-
-        .orb-mercury { width: 90px; height: 90px; animation-duration: 5s; }
-        .orb-venus   { width: 140px; height: 140px; animation-duration: 9s; }
-        .orb-earth   { width: 195px; height: 195px; animation-duration: 14s; }
-        .orb-mars    { width: 250px; height: 250px; animation-duration: 20s; }
-        .orb-jupiter { width: 310px; height: 310px; animation-duration: 28s; }
-        .orb-saturn  { width: 370px; height: 370px; animation-duration: 38s; }
-
-        .planet-node {
-            position: absolute;
-            top: 50%; left: 100%;
-            transform: translate(-50%, -50%);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .p-mercury { width: 10px; height: 10px; background: radial-gradient(circle at 30% 30%, #d1d5db, #6b7280); box-shadow: 0 0 5px rgba(209, 213, 219, 0.8); }
-        .p-venus   { width: 15px; height: 15px; background: radial-gradient(circle at 30% 30%, #fef08a, #ca8a04); box-shadow: 0 0 8px rgba(250, 204, 21, 0.8); }
-        .p-earth   { width: 18px; height: 18px; background: radial-gradient(circle at 30% 30%, #60a5fa 30%, #22c55e 70%, #1e3a8a 100%); box-shadow: 0 0 10px rgba(59, 130, 246, 0.9); }
-        .p-mars    { width: 14px; height: 14px; background: radial-gradient(circle at 30% 30%, #fca5a5, #dc2626); box-shadow: 0 0 8px rgba(239, 68, 68, 0.8); }
-        .p-jupiter { width: 26px; height: 26px; background: repeating-linear-gradient(180deg, #d97706, #fef3c7 4px, #92400e 8px); box-shadow: 0 0 12px rgba(217, 119, 6, 0.7); }
-        .p-saturn  { width: 22px; height: 22px; background: radial-gradient(circle at 30% 30%, #fde68a, #b45309); position: relative; }
-        .p-saturn::after { content: ''; position: absolute; width: 36px; height: 10px; border: 2px solid rgba(251, 191, 36, 0.7); border-radius: 50%; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(-20deg); }
-
-        @keyframes spinOrbit {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-        }
+        .bg-canvas { position:fixed; top:0; left:0; width:100vw; height:100vh; pointer-events:none; z-index:0; }
 
         /* ШАПКА */
         header {
-            position: sticky; top: 0;
+            position: sticky; top:0;
             background: var(--header-bg);
-            backdrop-filter: blur(18px);
-            -webkit-backdrop-filter: blur(18px);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
             border-bottom: 1px solid var(--border-color);
             z-index: 100;
             padding: 12px 16px;
         }
-
-        .header-container {
-            max-width: 1250px;
-            margin: 0 auto;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
+        .header-container { max-width:1300px; margin:0 auto; display:flex; flex-direction:column; gap:12px; }
+        .header-top { display:flex; justify-content:space-between; align-items:center; }
+        .logo {
+            font-size:22px; font-weight:800; letter-spacing:0.5px; cursor:pointer;
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
-
-        .header-top {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .logo { font-size: 20px; font-weight: 800; letter-spacing: 1px; cursor: pointer; }
-        .logo span { color: var(--accent-blue); }
-
-        .header-actions { display: flex; align-items: center; gap: 10px; }
-
+        .logo span { -webkit-text-fill-color: var(--text-light); background:none; }
+        .header-actions { display:flex; align-items:center; gap:10px; position:relative; }
         .action-btn {
-            background: var(--btn-bg);
-            border: 1px solid var(--border-color);
-            color: var(--text-light);
-            padding: 8px 12px;
-            border-radius: 12px;
-            cursor: pointer;
-            font-size: 14px;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            min-height: 40px;
+            background: var(--btn-bg); border:1px solid var(--border-color); color:var(--text-light);
+            padding:8px 14px; border-radius:40px; cursor:pointer; font-size:14px; font-weight:600;
+            display:flex; align-items:center; gap:6px; min-height:40px; transition:0.25s;
         }
-
+        .action-btn:hover { border-color:var(--accent-blue); box-shadow:0 0 20px var(--accent-glow); }
         .badge {
-            background: var(--accent-blue);
-            color: #fff;
-            font-size: 11px;
-            font-weight: 800;
-            padding: 2px 6px;
-            border-radius: 10px;
+            background:var(--accent-blue); color:#fff; font-size:11px; font-weight:800;
+            padding:2px 8px; border-radius:40px; margin-left:2px;
         }
 
-        nav { 
-            display: flex; 
-            gap: 8px; 
-            align-items: center;
-            overflow-x: auto;
-            white-space: nowrap;
-            -webkit-overflow-scrolling: touch;
-            scrollbar-width: none;
+        /* НАВИГАЦИЯ ПК */
+        nav.desktop-nav {
+            display:flex; gap:6px; align-items:center; overflow-x:auto; white-space:nowrap;
+            -webkit-overflow-scrolling:touch; scrollbar-width:none;
         }
-
-        nav::-webkit-scrollbar { display: none; }
-
+        nav.desktop-nav::-webkit-scrollbar { display:none; }
         .nav-btn {
-            background: transparent;
-            color: var(--text-muted);
-            border: 1px solid transparent;
-            padding: 8px 16px;
-            border-radius: 12px;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            flex-shrink: 0;
-            min-height: 40px;
+            background:transparent; color:var(--text-muted); border:none;
+            padding:8px 18px; border-radius:40px; font-size:14px; font-weight:600;
+            cursor:pointer; flex-shrink:0; min-height:40px; position:relative; transition:0.25s;
         }
+        .nav-btn::after {
+            content:''; position:absolute; bottom:4px; left:50%; transform:translateX(-50%);
+            width:0; height:2px; background:var(--accent-blue); border-radius:4px; transition:0.3s;
+        }
+        .nav-btn:hover { color:var(--text-light); }
+        .nav-btn.active { color:var(--accent-blue); background:var(--btn-bg); }
+        .nav-btn.active::after { width:40%; }
 
-        .nav-btn.active {
-            background: var(--btn-bg);
-            color: var(--accent-blue);
-            border-color: var(--accent-blue);
-            box-shadow: 0 0 12px var(--accent-glow);
+        /* МОБИЛЬНАЯ НИЖНЯЯ ПАНЕЛЬ */
+        .mobile-bottom-nav {
+            display:none; position:fixed; bottom:0; left:0; right:0; height:68px;
+            background:var(--header-bg); backdrop-filter:blur(20px);
+            -webkit-backdrop-filter:blur(20px); border-top:1px solid var(--border-color);
+            z-index:999; justify-content:space-around; align-items:center; padding:4px 8px;
         }
+        .mobile-tab-item {
+            display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px;
+            color:var(--text-muted); background:none; border:none; font-size:10px; font-weight:600;
+            cursor:pointer; flex:1; height:100%; transition:0.2s; border-radius:12px; padding:4px 0;
+        }
+        .mobile-tab-item .tab-icon { font-size:20px; }
+        .mobile-tab-item.active { color:var(--accent-blue); background:var(--btn-bg); }
 
         /* ОСНОВНОЙ КОНТЕНТ */
-        main {
-            max-width: 1100px;
-            margin: 20px auto;
-            padding: 0 16px;
-            position: relative;
-            z-index: 5;
-        }
-
-        .section-page { display: none; }
-        .section-page.active { display: block; }
-
-        .page-header { margin-bottom: 20px; }
-        .page-title { font-size: 24px; font-weight: 800; }
-        .page-subtitle { color: var(--text-muted); margin-top: 4px; font-size: 14px; }
-
+        main { max-width:1300px; margin:24px auto; padding:0 16px 80px; position:relative; z-index:5; }
+        .section-page { display:none; }
+        .section-page.active { display:block; }
+        .page-header { margin-bottom:28px; }
+        .page-title { font-size:28px; font-weight:800; letter-spacing:-0.5px; }
+        .page-subtitle { color:var(--text-muted); margin-top:4px; font-size:15px; }
+        .sub-group-title { font-size:20px; font-weight:700; color:var(--accent-blue); margin:32px 0 16px 0; border-bottom:1px solid var(--border-color); padding-bottom:6px; }
         .btn-back {
-            background: var(--btn-bg);
-            color: var(--accent-blue);
-            border: 1px solid var(--border-color);
-            padding: 8px 16px;
-            border-radius: 10px;
-            cursor: pointer;
-            font-weight: 600;
-            font-size: 14px;
-            margin-bottom: 15px;
-            display: inline-block;
+            background:var(--btn-bg); color:var(--accent-blue); border:1px solid var(--border-color);
+            padding:10px 20px; border-radius:40px; cursor:pointer; font-weight:600; font-size:14px;
+            margin-bottom:20px; display:inline-block; transition:0.25s;
         }
+        .btn-back:hover { border-color:var(--accent-blue); box-shadow:0 0 20px var(--accent-glow); }
 
-        .products-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 16px;
-        }
-
+        /* КАРТОЧКИ ТОВАРОВ */
+        .products-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(280px,1fr)); gap:24px; }
         .category-card {
-            background: var(--bg-card);
-            border-radius: 18px;
-            border: 1px solid var(--border-color);
-            overflow: hidden;
-            backdrop-filter: blur(10px);
-            display: flex;
-            flex-direction: column;
+            background:var(--bg-card); border-radius:20px; border:1px solid var(--border-color);
+            overflow:hidden; backdrop-filter:blur(10px); display:flex; flex-direction:column;
+            transition:transform 0.3s, border-color 0.3s, box-shadow 0.3s; box-shadow:var(--shadow-card);
         }
-
-        .preview-box {
-            width: 100%; height: 160px;
-            background: rgba(0, 0, 0, 0.2);
-            position: relative;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--text-muted);
-            font-size: 13px;
-        }
-
-        .preview-img { width: 100%; height: 100%; object-fit: cover; }
-        .img-human-full { object-position: center 25%; }
-        .img-human-mini { object-position: center 30%; }
-
-        .preview-badge {
-            position: absolute;
-            top: 10px; right: 10px;
-            background: rgba(15, 23, 42, 0.85);
-            color: var(--accent-blue);
-            border: 1px solid var(--border-color);
-            padding: 4px 8px;
-            border-radius: 8px;
-            font-size: 11px;
-            font-weight: 700;
-        }
-
-        .card-body { padding: 14px; display: flex; flex-direction: column; flex-grow: 1; }
-        .card-title { font-size: 16px; font-weight: 700; margin-bottom: 6px; }
-        .card-desc { font-size: 12px; color: var(--text-muted); line-height: 1.4; margin-bottom: 14px; flex-grow: 1; }
-        .card-actions { display: flex; gap: 8px; }
-
+        .category-card:hover { transform:translateY(-6px); border-color:var(--accent-blue); box-shadow:0 16px 48px var(--accent-glow); }
+        .preview-box { width:100%; height:240px; background:rgba(0,0,0,0.03); position:relative; display:flex; align-items:center; justify-content:center; color:var(--text-muted); font-size:14px; overflow:hidden; }
+        .preview-img { width:100%; height:100%; object-fit:cover; transition:transform 0.5s; }
+        .category-card:hover .preview-img { transform:scale(1.03); }
+        .img-human-full { object-position:center 25%; }
+        .img-human-mini { object-position:center 30%; }
+        .preview-badge { position:absolute; top:12px; right:12px; background:rgba(255,255,255,0.9); color:var(--accent-blue); border:1px solid var(--border-color); padding:4px 12px; border-radius:40px; font-size:11px; font-weight:700; backdrop-filter:blur(4px); }
+        .card-body { padding:18px; display:flex; flex-direction:column; flex-grow:1; }
+        .card-title { font-size:18px; font-weight:700; margin-bottom:4px; }
+        .card-desc { font-size:13px; color:var(--text-muted); line-height:1.5; margin-bottom:16px; flex-grow:1; }
+        .card-actions { display:flex; gap:10px; margin-top:auto; }
         .btn-view {
-            background: var(--accent-blue);
-            color: #ffffff;
-            border: none;
-            padding: 10px;
-            border-radius: 10px;
-            font-weight: 700;
-            font-size: 13px;
-            cursor: pointer;
-            flex-grow: 1;
-            text-align: center;
+            background:linear-gradient(135deg, var(--accent-blue), var(--accent-purple)); color:#fff;
+            border:none; padding:10px 16px; border-radius:40px; font-weight:700; font-size:13px;
+            cursor:pointer; flex-grow:1; text-align:center; transition:0.25s;
+            box-shadow:0 4px 16px rgba(37,99,235,0.3);
         }
-
+        .btn-view:hover { transform:scale(1.02); box-shadow:0 8px 24px rgba(37,99,235,0.5); }
         .btn-fav, .btn-cart {
-            background: var(--btn-bg);
-            border: 1px solid var(--border-color);
-            color: var(--text-light);
-            padding: 8px 12px;
-            border-radius: 10px;
-            cursor: pointer;
-            font-size: 15px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            background:var(--btn-bg); border:1px solid var(--border-color); color:var(--text-light);
+            padding:8px 14px; border-radius:40px; cursor:pointer; font-size:16px;
+            display:flex; align-items:center; justify-content:center; min-width:44px; transition:0.25s;
         }
+        .btn-fav:hover, .btn-cart:hover { border-color:var(--accent-blue); }
+        .btn-fav.active { color:#ef4444; border-color:#ef4444; }
 
-        .btn-fav.active { color: #ef4444; border-color: #ef4444; }
+        /* БЛОКИ КАК НА KVANTUM3D */
+        .service-grid {
+            display:grid; grid-template-columns:repeat(auto-fit, minmax(220px,1fr)); gap:24px;
+            margin:30px 0 40px;
+        }
+        .service-item {
+            background:var(--bg-card); border:1px solid var(--border-color); border-radius:20px;
+            padding:24px 20px; text-align:center; box-shadow:var(--shadow-card); transition:0.3s;
+        }
+        .service-item:hover { transform:translateY(-4px); border-color:var(--accent-blue); }
+        .service-item h4 { font-size:18px; font-weight:700; margin-bottom:8px; }
+        .service-item p { font-size:14px; color:var(--text-muted); line-height:1.5; }
+
+        .scan-block {
+            background:var(--bg-card); border:1px solid var(--border-color); border-radius:24px;
+            padding:32px 36px; margin:30px 0 40px; box-shadow:var(--shadow-card);
+            display:flex; flex-wrap:wrap; gap:24px; align-items:center;
+        }
+        .scan-text { flex:2; min-width:250px; }
+        .scan-text h3 { font-size:24px; font-weight:800; margin-bottom:12px; }
+        .scan-text p { font-size:15px; color:var(--text-muted); line-height:1.6; }
+        .scan-text ul { list-style:none; margin-top:16px; }
+        .scan-text ul li { padding:8px 0; border-bottom:1px solid var(--border-color); font-size:14px; }
+        .scan-text ul li::before { content:"✓ "; color:var(--accent-blue); font-weight:700; }
+
+        .hero-actions { display:flex; gap:16px; flex-wrap:wrap; margin-top:20px; }
+        .hero-actions .btn-view { flex:0 1 auto; padding:12px 32px; font-size:15px; }
+
+        /* КОНТАКТЫ */
+        .contacts-grid {
+            display:grid; grid-template-columns:repeat(auto-fit, minmax(200px,1fr)); gap:24px;
+            background:var(--bg-card); border-radius:24px; padding:32px; border:1px solid var(--border-color);
+            box-shadow:var(--shadow-card);
+        }
+        .contact-item { display:flex; align-items:center; gap:14px; font-size:15px; }
+        .contact-item .icon { font-size:24px; flex-shrink:0; }
+        .contact-item a { color:var(--text-light); text-decoration:none; transition:0.2s; }
+        .contact-item a:hover { color:var(--accent-blue); }
 
         /* ВИЗИТКА ПРЕПОДАВАТЕЛЯ */
         .tutor-card {
-            background: var(--bg-card);
-            border: 1px solid var(--border-color);
-            border-radius: 20px;
-            padding: 20px;
-            display: flex;
-            gap: 20px;
-            align-items: center;
-            margin-bottom: 30px;
+            background:var(--bg-card); border:1px solid var(--border-color); border-radius:24px;
+            padding:24px; display:flex; gap:24px; align-items:center; margin-bottom:32px;
+            box-shadow:var(--shadow-card);
         }
+        .tutor-photo { width:100px; height:100px; border-radius:20px; background:var(--btn-bg); border:2px dashed var(--border-color); display:flex; align-items:center; justify-content:center; flex-shrink:0; font-size:32px; color:var(--accent-blue); }
 
-        .tutor-photo {
-            width: 100px; height: 100px;
-            border-radius: 16px;
-            background: var(--btn-bg);
-            border: 2px dashed var(--border-color);
-            display: flex; align-items: center; justify-content: center;
-            flex-shrink: 0;
-        }
-
-        /* ПОЛНОЦЕННАЯ СТРАНИЦА ПОДДЕРЖКИ В СТИЛЕ МАРКЕТПЛЕЙСОВ */
+        /* ЧАТ ПОДДЕРЖКИ */
         .support-container {
-            background: var(--bg-card);
-            border: 1px solid var(--border-color);
-            border-radius: 20px;
-            height: 600px;
-            max-width: 850px;
-            margin: 0 auto;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-            backdrop-filter: blur(16px);
+            background:var(--bg-card); border:1px solid var(--border-color); border-radius:24px;
+            height:600px; max-width:850px; margin:0 auto; display:flex; flex-direction:column;
+            overflow:hidden; backdrop-filter:blur(16px); box-shadow:var(--shadow-card);
         }
+        .support-header { background:var(--header-bg); padding:16px 20px; border-bottom:1px solid var(--border-color); display:flex; align-items:center; gap:12px; }
+        .support-avatar { width:40px; height:40px; border-radius:50%; background:var(--accent-purple); color:#fff; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:18px; }
+        .support-messages { flex-grow:1; padding:20px; overflow-y:auto; display:flex; flex-direction:column; gap:14px; }
+        .chat-bubble { max-width:75%; padding:12px 18px; border-radius:18px; font-size:14px; line-height:1.5; position:relative; word-wrap:break-word; }
+        .chat-bubble.support { background:var(--btn-bg); border:1px solid var(--border-color); align-self:flex-start; border-bottom-left-radius:4px; }
+        .chat-bubble.user { background:var(--accent-blue); color:#fff; align-self:flex-end; border-bottom-right-radius:4px; }
+        .chat-time { font-size:10px; opacity:0.7; margin-top:4px; text-align:right; }
+        .chat-img-preview-msg { max-width:100%; max-height:220px; border-radius:12px; margin-top:8px; display:block; }
+        .support-footer { padding:12px 16px; border-top:1px solid var(--border-color); background:var(--header-bg); display:flex; flex-direction:column; gap:8px; }
+        .attachment-preview-bar { display:none; align-items:center; gap:10px; background:var(--btn-bg); padding:8px 14px; border-radius:40px; }
+        .attachment-preview-bar.active { display:flex; }
+        .attachment-thumb { width:40px; height:40px; object-fit:cover; border-radius:8px; }
+        .support-input-row { display:flex; gap:10px; align-items:center; }
+        .file-attach-btn { background:var(--btn-bg); border:1px solid var(--border-color); color:var(--text-light); width:44px; height:44px; border-radius:40px; cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:18px; flex-shrink:0; transition:0.25s; }
+        .file-attach-btn:hover { border-color:var(--accent-blue); }
+        .support-input { flex-grow:1; background:var(--btn-bg); border:1px solid var(--border-color); color:var(--text-light); padding:12px 18px; border-radius:40px; outline:none; font-size:14px; font-family:var(--font); }
+        .support-input:focus { border-color:var(--accent-blue); }
+        .support-send-btn { background:linear-gradient(135deg, var(--accent-blue), var(--accent-purple)); color:#fff; border:none; padding:0 24px; height:44px; border-radius:40px; font-weight:700; cursor:pointer; transition:0.25s; box-shadow:0 4px 16px rgba(37,99,235,0.3); }
+        .support-send-btn:hover { transform:scale(1.02); box-shadow:0 8px 24px rgba(37,99,235,0.5); }
 
-        .support-header {
-            background: var(--header-bg);
-            padding: 16px 20px;
-            border-bottom: 1px solid var(--border-color);
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
+        /* МОДАЛЬНЫЕ ОКНА (корзина, избранное, детали) */
+        .modal-overlay { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); backdrop-filter:blur(8px); z-index:1000; align-items:center; justify-content:center; padding:12px; }
+        .modal-overlay.active { display:flex; }
+        .modal-card { background:var(--bg-card); border:1px solid var(--border-color); border-radius:24px; max-width:500px; width:100%; max-height:85vh; overflow-y:auto; padding:24px; box-shadow:var(--shadow-card); }
+        .modal-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; border-bottom:1px solid var(--border-color); padding-bottom:12px; }
+        .modal-close { background:var(--btn-bg); border:none; color:var(--text-light); width:36px; height:36px; border-radius:50%; cursor:pointer; font-size:20px; transition:0.2s; }
+        .modal-close:hover { background:var(--border-color); }
+        .modal-item-row { display:flex; justify-content:space-between; align-items:center; padding:10px 0; border-bottom:1px solid var(--border-color); font-size:14px; }
 
-        .support-avatar {
-            width: 40px; height: 40px;
-            border-radius: 50%;
-            background: var(--wb-purple);
-            color: #fff;
-            display: flex; align-items: center; justify-content: center;
-            font-weight: 800; font-size: 18px;
-        }
+        .product-modal-card { max-width:900px !important; }
+        .product-modal-grid { display:grid; grid-template-columns:1fr 1fr; gap:24px; margin-top:10px; }
+        .pm-photo-box { width:100%; height:340px; background:rgba(0,0,0,0.03); border-radius:20px; overflow:hidden; display:flex; align-items:center; justify-content:center; border:1px solid var(--border-color); }
+        .pm-photo-box img { width:100%; height:100%; object-fit:cover; }
+        .pm-details-box { display:flex; flex-direction:column; }
+        .pm-price { font-size:24px; font-weight:800; color:var(--accent-blue); margin:10px 0; }
+        .pm-desc { font-size:14px; color:var(--text-muted); line-height:1.6; margin-bottom:20px; }
+        .pm-actions { display:flex; gap:10px; margin-bottom:20px; }
+        /* Блок отзывов скрыт — убрали */
 
-        .support-messages {
-            flex-grow: 1;
-            padding: 20px;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            gap: 14px;
-        }
-
-        .chat-bubble {
-            max-width: 75%;
-            padding: 12px 16px;
-            border-radius: 16px;
-            font-size: 14px;
-            line-height: 1.5;
-            position: relative;
-            word-wrap: break-word;
-        }
-
-        .chat-bubble.support {
-            background: var(--btn-bg);
-            border: 1px solid var(--border-color);
-            align-self: flex-start;
-            border-bottom-left-radius: 4px;
-        }
-
-        .chat-bubble.user {
-            background: var(--accent-blue);
-            color: #ffffff;
-            align-self: flex-end;
-            border-bottom-right-radius: 4px;
-        }
-
-        .chat-time {
-            font-size: 10px;
-            opacity: 0.7;
-            margin-top: 4px;
-            text-align: right;
-        }
-
-        .chat-img-preview-msg {
-            max-width: 100%;
-            max-height: 220px;
-            border-radius: 12px;
-            margin-top: 8px;
-            display: block;
-        }
-
-        .support-footer {
-            padding: 12px 16px;
-            border-top: 1px solid var(--border-color);
-            background: var(--header-bg);
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-
-        .attachment-preview-bar {
-            display: none;
-            align-items: center;
-            gap: 10px;
-            background: var(--btn-bg);
-            padding: 8px 12px;
-            border-radius: 10px;
-        }
-
-        .attachment-preview-bar.active { display: flex; }
-
-        .attachment-thumb {
-            width: 42px; height: 42px;
-            object-fit: cover;
-            border-radius: 6px;
-        }
-
-        .support-input-row {
-            display: flex;
-            gap: 10px;
-            align-items: center;
-        }
-
-        .file-attach-btn {
-            background: var(--btn-bg);
-            border: 1px solid var(--border-color);
-            color: var(--text-light);
-            width: 42px; height: 42px;
-            border-radius: 12px;
-            cursor: pointer;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 18px;
-            flex-shrink: 0;
-        }
-
-        .support-input {
-            flex-grow: 1;
-            background: var(--btn-bg);
-            border: 1px solid var(--border-color);
-            color: var(--text-light);
-            padding: 12px 16px;
-            border-radius: 12px;
-            outline: none;
-            font-size: 14px;
-        }
-
-        .support-send-btn {
-            background: var(--accent-blue);
-            color: #fff;
-            border: none;
-            padding: 0 20px;
-            height: 42px;
-            border-radius: 12px;
-            font-weight: 700;
-            cursor: pointer;
-        }
-
-        /* ПРОФИЛЬ ПОЛЬЗОВАТЕЛЯ В СТИЛЕ WB */
-        .profile-card {
-            background: var(--bg-card);
-            border-radius: 20px;
-            border: 1px solid var(--border-color);
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-            gap: 12px;
-        }
-
-        .profile-avatar-wrapper {
-            position: relative;
-            width: 100px; height: 100px;
-            border-radius: 50%;
-            overflow: hidden;
-            border: 3px solid var(--wb-purple);
-            box-shadow: 0 0 15px rgba(203, 17, 171, 0.4);
-            cursor: pointer;
-        }
-
-        .profile-avatar-img { width: 100%; height: 100%; object-fit: cover; }
-
-        .avatar-overlay {
-            position: absolute; bottom: 0; left: 0; right: 0;
-            background: rgba(0, 0, 0, 0.6);
-            color: #fff; font-size: 10px; padding: 4px 0; text-align: center;
-        }
-
-        .profile-name-display { font-size: 20px; font-weight: 800; color: var(--text-light); }
-
-        .wb-menu-list {
-            width: 100%;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            margin-top: 10px;
-        }
-
-        .wb-menu-item {
-            background: var(--btn-bg);
-            border: 1px solid var(--border-color);
-            padding: 14px 18px;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-        }
-
-        /* МОДАЛЬНЫЕ ОКНА */
-        .modal-overlay {
-            display: none;
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.85);
-            backdrop-filter: blur(8px);
-            z-index: 1000;
-            align-items: center;
-            justify-content: center;
-            padding: 12px;
-        }
-
-        .modal-overlay.active { display: flex; }
-
-        .modal-card {
-            background: var(--bg-card);
-            border: 1px solid var(--border-color);
-            border-radius: 20px;
-            max-width: 500px;
-            width: 100%;
-            max-height: 85vh;
-            overflow-y: auto;
-            padding: 20px;
-        }
-
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 16px;
-            border-bottom: 1px solid var(--border-color);
-            padding-bottom: 10px;
-        }
-
-        .modal-close {
-            background: var(--btn-bg);
-            border: none;
-            color: var(--text-light);
-            width: 32px; height: 32px;
-            border-radius: 50%;
-            cursor: pointer;
-            font-size: 18px;
-        }
-
-        .modal-item-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px 0;
-            border-bottom: 1px solid var(--border-color);
-            font-size: 14px;
-        }
-
-        .auth-form-input {
-            width: 100%;
-            background: var(--btn-bg);
-            border: 1px solid var(--border-color);
-            color: var(--text-light);
-            padding: 12px 14px;
-            border-radius: 12px;
-            outline: none;
-            font-size: 15px;
-            margin-bottom: 12px;
-        }
-
-        @media (max-width: 768px) {
-            .solar-system-wrapper { display: none !important; }
-            .tutor-card { flex-direction: column; text-align: center; }
-            .products-grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
-            .support-container { height: 75vh; }
+        @media (max-width:768px) {
+            body { padding-bottom:80px; }
+            nav.desktop-nav { display:none; }
+            .mobile-bottom-nav { display:flex; }
+            .tutor-card { flex-direction:column; text-align:center; }
+            .products-grid { grid-template-columns:repeat(auto-fill, minmax(160px,1fr)); }
+            .preview-box { height:180px; }
+            .support-container { height:calc(100vh - 180px); }
+            .product-modal-grid { grid-template-columns:1fr; gap:16px; }
+            .pm-photo-box { height:220px; }
+            .page-title { font-size:22px; }
+            .service-grid { grid-template-columns:1fr 1fr; }
+            .scan-block { padding:20px; }
+            .contacts-grid { grid-template-columns:1fr; }
         }
     </style>
 </head>
 <body>
 
-    <!-- ФОНОВЫЙ КАНВАС -->
+    <!-- ФОН-КАНВАС (лёгкое облачко) -->
     <canvas id="themeCanvas" class="bg-canvas"></canvas>
-
-    <!-- СОЛНЕЧНАЯ СИСТЕМА ДЛЯ ПК -->
-    <div class="solar-system-wrapper">
-        <div class="solar-system" id="solarSystem">
-            <div class="sun-body"><span class="planet-label sun-label">SUN</span></div>
-            <div class="orbit orb-mercury"><div class="planet-node p-mercury"><span class="planet-label">MERCURY</span></div></div>
-            <div class="orbit orb-venus"><div class="planet-node p-venus"><span class="planet-label">VENUS</span></div></div>
-            <div class="orbit orb-earth"><div class="planet-node p-earth"><span class="planet-label">EARTH</span></div></div>
-            <div class="orbit orb-mars"><div class="planet-node p-mars"><span class="planet-label">MARS</span></div></div>
-            <div class="orbit orb-jupiter"><div class="planet-node p-jupiter"><span class="planet-label">JUPITER</span></div></div>
-            <div class="orbit orb-saturn"><div class="planet-node p-saturn"><span class="planet-label">SATURN</span></div></div>
-        </div>
-    </div>
 
     <!-- ШАПКА -->
     <header>
         <div class="header-container">
             <div class="header-top">
-                <div class="logo" onclick="openMainSection('print-page')">🚀 STUDIO <span>COSMOS</span></div>
-                
+                <div class="logo" onclick="openMainSection('print-page')">⚙️ Лаборатория <span>Омниссия</span></div>
                 <div class="header-actions">
-                    <button class="action-btn" onclick="handleProfileClick()">👤 <span id="headerUserName" style="font-size: 12px; font-weight:700;">Войти</span></button>
                     <button class="action-btn" onclick="openModal('favModal')">❤️ <span class="badge" id="favCount">0</span></button>
                     <button class="action-btn" onclick="openModal('cartModal')">🛒 <span class="badge" id="cartCount">0</span></button>
-                    <button class="action-btn" onclick="toggleTheme()" id="themeBtn">☀️</button>
                 </div>
             </div>
 
-            <nav id="mainNav">
+            <nav class="desktop-nav" id="mainNav">
                 <button class="nav-btn active" id="btn-print" onclick="openMainSection('print-page')">🖨 3D-Печать</button>
                 <button class="nav-btn" id="btn-resin" onclick="openMainSection('resin-page')">💎 Эпоксидная смола</button>
                 <button class="nav-btn" id="btn-math-proj" onclick="openMainSection('math-proj-page')">📐 Математика и Проекты</button>
                 <button class="nav-btn" id="btn-support" onclick="openMainSection('support-page')">💬 Поддержка</button>
+                <button class="nav-btn" id="btn-contacts" onclick="openMainSection('contacts-page')">📞 Контакты</button>
             </nav>
         </div>
     </header>
 
+    <!-- ОСНОВНОЙ КОНТЕНТ -->
     <main>
 
-        <!-- 1. 3D-ПЕЧАТЬ -->
+        <!-- 1. 3D-ПЕЧАТЬ (главная) -->
         <section id="print-page" class="section-page active">
+            <div style="margin-bottom:20px;">
+                <h2 style="font-size:28px; font-weight:800; margin-bottom:6px;">Что мы можем изготовить</h2>
+                <p style="color:var(--text-muted); font-size:16px;">Инженерные детали, прототипы, макеты, серийное производство</p>
+            </div>
+            <div class="service-grid">
+                <div class="service-item">
+                    <h4>⚙️ Инженерные детали и запчасти</h4>
+                    <p>Корпуса, крепления, шестерни, элементы механизмов, запчасти и другие функциональные изделия.</p>
+                </div>
+                <div class="service-item">
+                    <h4>🧪 Прототипы для бизнеса</h4>
+                    <p>Функциональные и габаритные прототипы для проверки конструкции перед производством.</p>
+                </div>
+                <div class="service-item">
+                    <h4>🏛 Макеты и сувенирная продукция</h4>
+                    <p>Промышленные, архитектурные, демонстрационные макеты, сувенирные материалы.</p>
+                </div>
+                <div class="service-item">
+                    <h4>📦 Мелкосерийное производство</h4>
+                    <p>Производство партий без затрат на пресс-формы.</p>
+                </div>
+            </div>
+
+            <!-- Блок 3D-сканирование -->
+            <div class="scan-block">
+                <div class="scan-text">
+                    <h3>3D-сканирование объектов и деталей</h3>
+                    <p>Оцифровываем физические объекты и детали, точно передавая их форму и геометрию. Используем 3D-сканирование для восстановления деталей, реверс-инжиниринга, контроля размеров и подготовки изделий к производству.</p>
+                    <ul>
+                        <li><strong>Восстановление деталей по образцу</strong> – достаточно предоставить существующую деталь, мы отсканируем и подготовим модель.</li>
+                        <li><strong>Цифровая модель объекта</strong> – получаете точную 3D-модель для анализа, доработки или производства.</li>
+                    </ul>
+                    <div class="hero-actions">
+                        <button class="btn-view" onclick="openMainSection('support-page')">Рассчитать стоимость</button>
+                        <button class="btn-view" style="background:var(--btn-bg); color:var(--text-light); border:1px solid var(--border-color); box-shadow:none;" onclick="openMainSection('support-page')">Смотреть работы</button>
+                    </div>
+                </div>
+                <div style="flex:1; min-width:150px; text-align:center; font-size:80px; opacity:0.3;">📷</div>
+            </div>
+
             <div class="page-header">
-                <h1 class="page-title">3D-Печать и Изготовление</h1>
-                <p class="page-subtitle">Каталог услуг и разделов:</p>
+                <h1 class="page-title">Каталог услуг 3D-печати</h1>
+                <p class="page-subtitle">Выберите подраздел для просмотра товаров</p>
             </div>
 
             <div class="products-grid">
                 <div class="category-card">
-                    <div class="preview-box">
-                        <img src="разное.jpg" alt="Разное" class="preview-img">
-                        <div class="preview-badge">Подраздел</div>
-                    </div>
+                    <div class="preview-box"><img src="разное1.jpg" alt="Разное" class="preview-img"><div class="preview-badge">Подраздел</div></div>
                     <div class="card-body">
                         <div class="card-title">Разное</div>
-                        <div class="card-desc">Сувениры и аксессуары.</div>
+                        <div class="card-desc">Сувениры, фигурки и аксессуары.</div>
                         <button class="btn-view" onclick="openCategoryPage('misc')">Перейти &rarr;</button>
                     </div>
                 </div>
-
                 <div class="category-card">
-                    <div class="preview-box">
-                        <img src="производственное.jpg" alt="Производственное" class="preview-img">
-                        <div class="preview-badge">Промышленное</div>
-                    </div>
+                    <div class="preview-box"><img src="штука1.jpg" alt="Производственное" class="preview-img"><div class="preview-badge">Промышленное</div></div>
                     <div class="card-body">
                         <div class="card-title">Производственное</div>
-                        <div class="card-desc">Инженерная печать.</div>
+                        <div class="card-desc">Детали, штуки и элементы кресел.</div>
                         <button class="btn-view" onclick="openCategoryPage('industrial')">Перейти &rarr;</button>
                     </div>
                 </div>
-
                 <div class="category-card">
-                    <div class="preview-box">
-                        <img src="человек.jpg" alt="Человек в рост" class="preview-img img-human-full">
-                        <div class="preview-badge">Подраздел</div>
-                    </div>
+                    <div class="preview-box"><img src="человек.jpg" alt="Человек в рост" class="preview-img img-human-full"><div class="preview-badge">Подраздел</div></div>
                     <div class="card-body">
                         <div class="card-title">Человек в полный рост</div>
-                        <div class="card-desc">Анатомические макеты.</div>
+                        <div class="card-desc">Анатомические и ростовые макеты.</div>
                         <button class="btn-view" onclick="openCategoryPage('human-full')">Перейти &rarr;</button>
                     </div>
                 </div>
-
                 <div class="category-card">
-                    <div class="preview-box">
-                        <img src="минифигуркачеловека.jpg" alt="Мини фигурка" class="preview-img img-human-mini">
-                        <div class="preview-badge">Подраздел</div>
-                    </div>
+                    <div class="preview-box"><img src="минифигуркачеловека.jpg" alt="Мини фигурка" class="preview-img img-human-mini"><div class="preview-badge">Подраздел</div></div>
                     <div class="card-body">
                         <div class="card-title">Мини фигурка человека</div>
-                        <div class="card-desc">Высокоточная печать.</div>
+                        <div class="card-desc">Высокоточная персональная печать.</div>
                         <button class="btn-view" onclick="openCategoryPage('human-mini')">Перейти &rarr;</button>
                     </div>
                 </div>
-
                 <div class="category-card">
                     <div class="preview-box">Скоро...</div>
                     <div class="card-body">
                         <div class="card-title">Раздел 5</div>
-                        <div class="card-desc"></div>
+                        <div class="card-desc">Дополнительные услуги 3D печати.</div>
                         <button class="btn-view" onclick="openCategoryPage('print-5')">Перейти &rarr;</button>
                     </div>
                 </div>
@@ -775,90 +383,141 @@
         <section id="resin-page" class="section-page">
             <div class="page-header">
                 <h1 class="page-title">Изделия из Эпоксидной Смолы</h1>
-                <p class="page-subtitle">Дизайнерские работы:</p>
+                <p class="page-subtitle">Дизайнерские работы ручной работы</p>
             </div>
-
             <div class="products-grid">
                 <div class="category-card">
-                    <div class="preview-box">
-                        <img src="шахматы.jpg" alt="Шахматы" class="preview-img">
-                        <div class="preview-badge">Эксклюзив</div>
-                    </div>
+                    <div class="preview-box"><img src="шахматы1.jpg" alt="Шахматы" class="preview-img"><div class="preview-badge">Эксклюзив</div></div>
                     <div class="card-body">
                         <div class="card-title">Шахматы</div>
-                        <div class="card-desc">Шахматы из смолы.</div>
+                        <div class="card-desc">Авторские шахматные наборы из смолы.</div>
                         <button class="btn-view" onclick="openCategoryPage('chess')">Перейти &rarr;</button>
                     </div>
                 </div>
-
-                <div class="category-card"><div class="preview-box">Скоро...</div><div class="card-body"><div class="card-title">Раздел 2</div><div class="card-desc"></div><button class="btn-view" onclick="openCategoryPage('resin-2')">Перейти &rarr;</button></div></div>
-                <div class="category-card"><div class="preview-box">Скоро...</div><div class="card-body"><div class="card-title">Раздел 3</div><div class="card-desc"></div><button class="btn-view" onclick="openCategoryPage('resin-3')">Перейти &rarr;</button></div></div>
-                <div class="category-card"><div class="preview-box">Скоро...</div><div class="card-body"><div class="card-title">Раздел 4</div><div class="card-desc"></div><button class="btn-view" onclick="openCategoryPage('resin-4')">Перейти &rarr;</button></div></div>
-                <div class="category-card"><div class="preview-box">Скоро...</div><div class="card-body"><div class="card-title">Раздел 5</div><div class="card-desc"></div><button class="btn-view" onclick="openCategoryPage('resin-5')">Перейти &rarr;</button></div></div>
+                <div class="category-card"><div class="preview-box">Скоро...</div><div class="card-body"><div class="card-title">Раздел 2</div><div class="card-desc">Изделия на заказ</div><button class="btn-view" onclick="openCategoryPage('resin-2')">Перейти &rarr;</button></div></div>
+                <div class="category-card"><div class="preview-box">Скоро...</div><div class="card-body"><div class="card-title">Раздел 3</div><div class="card-desc">Эпоксидные столы</div><button class="btn-view" onclick="openCategoryPage('resin-3')">Перейти &rarr;</button></div></div>
+                <div class="category-card"><div class="preview-box">Скоро...</div><div class="card-body"><div class="card-title">Раздел 4</div><div class="card-desc">Украшения и панно</div><button class="btn-view" onclick="openCategoryPage('resin-4')">Перейти &rarr;</button></div></div>
+                <div class="category-card"><div class="preview-box">Скоро...</div><div class="card-body"><div class="card-title">Раздел 5</div><div class="card-desc">Сувениры</div><button class="btn-view" onclick="openCategoryPage('resin-5')">Перейти &rarr;</button></div></div>
             </div>
         </section>
 
         <!-- 3. МАТЕМАТИКА И ПРОЕКТЫ -->
         <section id="math-proj-page" class="section-page">
             <div class="tutor-card">
-                <div class="tutor-photo">
-                    <svg width="40" height="40" fill="currentColor" viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
-                </div>
+                <div class="tutor-photo">🧑‍🏫</div>
                 <div>
-                    <h2 style="font-size: 20px; margin-bottom: 6px;">Визитка Преподавателя</h2>
-                    <p style="color: var(--accent-blue); font-weight:600; font-size:14px; margin-bottom: 8px;">Индивидуальное обучение и помощь с проектами</p>
-                    <p style="color: var(--text-muted); font-size: 13px; line-height: 1.5; margin-bottom: 12px;">
-                        Освоение школьной программы, подготовка к экзаменам, сопровождение исследовательских и инженерных работ.
+                    <h2 style="font-size:22px; margin-bottom:6px;">Визитка Преподавателя</h2>
+                    <p style="color:var(--accent-blue); font-weight:600; font-size:15px; margin-bottom:8px;">Индивидуальное обучение и помощь с проектами</p>
+                    <p style="color:var(--text-muted); font-size:14px; line-height:1.6; margin-bottom:12px;">
+                        Освоение школьной и университетской программы, подготовка к экзаменам, сопровождение исследовательских и инженерных проектов.
                     </p>
                     <button class="btn-view" onclick="openMainSection('support-page')">Записаться / Консультация</button>
                 </div>
             </div>
 
             <div class="page-header"><h2 class="page-title">Каталог материалов и услуг</h2></div>
-
             <div class="products-grid">
-                <div class="category-card"><div class="preview-box">🎥</div><div class="card-body"><div class="card-title">Видеоуроки</div><div class="card-desc">Записи разборов тем.</div><button class="btn-view" onclick="openCategoryPage('math-videos')">Перейти &rarr;</button></div></div>
-                <div class="category-card"><div class="preview-box">📝</div><div class="card-body"><div class="card-title">Шпоргалки</div><div class="card-desc">Формулы и конспекты.</div><button class="btn-view" onclick="openCategoryPage('math-cheat')">Перейти &rarr;</button></div></div>
-                <div class="category-card"><div class="preview-box">⏳</div><div class="card-body"><div class="card-title">Этап 1</div><div class="card-desc"></div><button class="btn-view" onclick="openCategoryPage('stage-1')">Перейти &rarr;</button></div></div>
-                <div class="category-card"><div class="preview-box">⏳</div><div class="card-body"><div class="card-title">Этап 2</div><div class="card-desc"></div><button class="btn-view" onclick="openCategoryPage('stage-2')">Перейти &rarr;</button></div></div>
-                <div class="category-card"><div class="preview-box"><img src="производственное.jpg" class="preview-img"></div><div class="card-body"><div class="card-title">Сопровождение проектов</div><div class="card-desc">Помощь с исследованием.</div><button class="btn-view" onclick="openCategoryPage('proj-support')">Перейти &rarr;</button></div></div>
-                <div class="category-card"><div class="preview-box"><img src="проект.jpg" class="preview-img"></div><div class="card-body"><div class="card-title">Примеры работ</div><div class="card-desc">Галерея готовых проектов.</div><button class="btn-view" onclick="openCategoryPage('proj-examples')">Перейти &rarr;</button></div></div>
+                <div class="category-card"><div class="preview-box">🎥</div><div class="card-body"><div class="card-title">Видеоуроки</div><div class="card-desc">Записи подробных разборов тем.</div><button class="btn-view" onclick="openCategoryPage('math-videos')">Перейти &rarr;</button></div></div>
+                <div class="category-card"><div class="preview-box">📝</div><div class="card-body"><div class="card-title">Шпоргалки</div><div class="card-desc">Формулы, схемы и конспекты.</div><button class="btn-view" onclick="openCategoryPage('math-cheat')">Перейти &rarr;</button></div></div>
+                <div class="category-card"><div class="preview-box">⏳</div><div class="card-body"><div class="card-title">Этап 1</div><div class="card-desc">Базовая программа обучения.</div><button class="btn-view" onclick="openCategoryPage('stage-1')">Перейти &rarr;</button></div></div>
+                <div class="category-card"><div class="preview-box">⏳</div><div class="card-body"><div class="card-title">Этап 2</div><div class="card-desc">Продвинутый уровень задач.</div><button class="btn-view" onclick="openCategoryPage('stage-2')">Перейти &rarr;</button></div></div>
+                <div class="category-card">
+                    <div class="preview-box"><img src="самолет.jpg" class="preview-img"></div>
+                    <div class="card-body">
+                        <div class="card-title">Сопровождение проектов</div>
+                        <div class="card-desc">Помощь с исследованиями и техническими работами.</div>
+                        <button class="btn-view" onclick="openCategoryPage('proj-support')">Перейти &rarr;</button>
+                    </div>
+                </div>
+                <div class="category-card">
+                    <div class="preview-box"><img src="самолет.jpg" class="preview-img"></div>
+                    <div class="card-body">
+                        <div class="card-title">Примеры работ</div>
+                        <div class="card-desc">Галерея готовых студенческих и школьных проектов.</div>
+                        <button class="btn-view" onclick="openCategoryPage('proj-examples')">Перейти &rarr;</button>
+                    </div>
+                </div>
             </div>
         </section>
 
-        <!-- 4. ОТДЕЛЬНАЯ СТРАНИЦА ПОДДЕРЖКИ (МАРКЕТПЛЕЙС-СТИЛЬ) -->
+        <!-- 4. ПОДДЕРЖКА + ЧАТ -->
         <section id="support-page" class="section-page">
             <div class="page-header">
                 <h1 class="page-title">Служба Поддержки</h1>
-                <p class="page-subtitle">Прямой диалог с менеджером STUDIO COSMOS (интегрирован с Telegram)</p>
+                <p class="page-subtitle">Прямой диалог с менеджером Омниссия (интегрирован с Telegram)</p>
             </div>
-
             <div class="support-container">
                 <div class="support-header">
                     <div class="support-avatar">💬</div>
                     <div>
-                        <div style="font-weight: 700; font-size: 15px;">Менеджер STUDIO COSMOS</div>
-                        <div style="font-size: 12px; color: #22c55e;">● Онлайн (сообщения уходят в Telegram)</div>
+                        <div style="font-weight:700; font-size:15px;">Менеджер Омниссия</div>
+                        <div style="font-size:12px; color:#22c55e;">● Онлайн (сообщения уходят в Telegram)</div>
                     </div>
                 </div>
-
-                <div class="support-messages" id="supportMessagesList">
-                    <!-- Диалог загружается автоматически под текущий профиль -->
-                </div>
-
+                <div class="support-messages" id="supportMessagesList"></div>
                 <div class="support-footer">
                     <div class="attachment-preview-bar" id="attachmentBar">
                         <img src="" id="attachmentPreviewImg" class="attachment-thumb">
-                        <span style="font-size: 12px; color: var(--text-muted);" id="attachmentFileName">Фото выбрано</span>
-                        <button class="modal-close" style="width:22px; height:22px; font-size:12px; margin-left:auto;" onclick="cancelAttachment()">&times;</button>
+                        <span style="font-size:12px; color:var(--text-muted);" id="attachmentFileName">Фото выбрано</span>
+                        <button class="modal-close" style="width:28px; height:28px; font-size:14px; margin-left:auto;" onclick="cancelAttachment()">&times;</button>
                     </div>
-
                     <div class="support-input-row">
                         <button class="file-attach-btn" onclick="document.getElementById('chatFileInput').click()" title="Прикрепить фото">📎</button>
-                        <input type="file" id="chatFileInput" accept="image/*" style="display: none;" onchange="handleFileSelect(event)">
-                        
+                        <input type="file" id="chatFileInput" accept="image/*" style="display:none;" onchange="handleFileSelect(event)">
                         <input type="text" id="supportInput" class="support-input" placeholder="Задайте вопрос или напишите комментарий..." onkeypress="if(event.key==='Enter') sendSupportMessage()">
                         <button class="support-send-btn" onclick="sendSupportMessage()">Отправить</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 5. КОНТАКТЫ -->
+        <section id="contacts-page" class="section-page">
+            <div class="page-header">
+                <h1 class="page-title">Контакты</h1>
+                <p class="page-subtitle">Свяжитесь с нами любым удобным способом</p>
+            </div>
+            <div class="contacts-grid">
+                <div class="contact-item">
+                    <span class="icon">📞</span>
+                    <div>
+                        <div style="font-weight:600;">Телефон</div>
+                        <a href="tel:+79991234567">+7 (999) 123-45-67</a>
+                    </div>
+                </div>
+                <div class="contact-item">
+                    <span class="icon">✉️</span>
+                    <div>
+                        <div style="font-weight:600;">Email</div>
+                        <a href="mailto:info@omnissia.ru">info@omnissia.ru</a>
+                    </div>
+                </div>
+                <div class="contact-item">
+                    <span class="icon">💬</span>
+                    <div>
+                        <div style="font-weight:600;">Telegram</div>
+                        <a href="#" target="_blank">@omnissia_support</a>
+                    </div>
+                </div>
+                <div class="contact-item">
+                    <span class="icon">📱</span>
+                    <div>
+                        <div style="font-weight:600;">WhatsApp</div>
+                        <a href="#" target="_blank">+7 (999) 123-45-67</a>
+                    </div>
+                </div>
+                <div class="contact-item">
+                    <span class="icon">📘</span>
+                    <div>
+                        <div style="font-weight:600;">ВКонтакте</div>
+                        <a href="#" target="_blank">vk.com/omnissia</a>
+                    </div>
+                </div>
+                <div class="contact-item">
+                    <span class="icon">🌐</span>
+                    <div>
+                        <div style="font-weight:600;">Сайт</div>
+                        <a href="#" target="_blank">omnissia.ru</a>
                     </div>
                 </div>
             </div>
@@ -867,246 +526,245 @@
         <!-- ДИНАМИЧЕСКАЯ СТРАНИЦА ПОДРАЗДЕЛОВ -->
         <section id="category-detail-page" class="section-page">
             <button class="btn-back" onclick="goBackToMain()">&larr; Назад</button>
-
             <div class="page-header">
                 <h1 class="page-title" id="cat-title">Название</h1>
                 <p class="page-subtitle" id="cat-desc"></p>
             </div>
-
-            <div class="products-grid" id="cat-products-grid"></div>
+            <div id="cat-products-container"></div>
         </section>
 
     </main>
 
-    <!-- МОДАЛЬНОЕ ОКНО АВТОРИЗАЦИИ / РЕГИСТРАЦИИ -->
-    <div class="modal-overlay" id="authModal">
-        <div class="modal-card">
-            <div class="modal-header">
-                <h3>🔐 Вход / Регистрация</h3>
-                <button class="modal-close" onclick="closeModal('authModal')">&times;</button>
-            </div>
-            <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 16px;">
-                Введите ваше имя или логин. Каждая учетная запись имеет свой личный кабинет, корзину, избранное и историю переписки!
-            </p>
-            <input type="text" id="authLoginInput" class="auth-form-input" placeholder="Введите ваш логин или имя...">
-            <button class="btn-view" style="width: 100%; padding: 12px; font-size: 15px;" onclick="performLogin()">Зайти под этим логином &rarr;</button>
-        </div>
+    <!-- МОБИЛЬНАЯ НИЖНЯЯ ПАНЕЛЬ -->
+    <div class="mobile-bottom-nav">
+        <button class="mobile-tab-item active" id="mtab-print" onclick="openMainSection('print-page')">
+            <span class="tab-icon">🖨</span><span>Печать</span>
+        </button>
+        <button class="mobile-tab-item" id="mtab-resin" onclick="openMainSection('resin-page')">
+            <span class="tab-icon">💎</span><span>Смола</span>
+        </button>
+        <button class="mobile-tab-item" id="mtab-math-proj" onclick="openMainSection('math-proj-page')">
+            <span class="tab-icon">📐</span><span>Проекты</span>
+        </button>
+        <button class="mobile-tab-item" id="mtab-support" onclick="openMainSection('support-page')">
+            <span class="tab-icon">💬</span><span>Чат</span>
+        </button>
+        <button class="mobile-tab-item" id="mtab-contacts" onclick="openMainSection('contacts-page')">
+            <span class="tab-icon">📞</span><span>Контакты</span>
+        </button>
     </div>
 
-    <!-- МОДАЛЬНОЕ ОКНО ПРОФИЛЯ В СТИЛЕ WB (БЕЗ СКИДОК И ПРОМОКОДОВ) -->
-    <div class="modal-overlay" id="profileModal">
-        <div class="modal-card">
-            <div class="modal-header">
-                <h3 style="color: var(--wb-purple);">👤 Профиль клиента</h3>
-                <button class="modal-close" onclick="closeModal('profileModal')">&times;</button>
-            </div>
-
-            <div class="profile-card">
-                <div class="profile-avatar-wrapper" onclick="document.getElementById('avatarInput').click()">
-                    <img src="https://via.placeholder.com/100" id="userAvatar" class="profile-avatar-img" alt="Аватар">
-                    <div class="avatar-overlay">Изменить</div>
-                </div>
-                <input type="file" id="avatarInput" style="display: none;" accept="image/*" onchange="loadAvatar(event)">
-
-                <div class="profile-name-display" id="profileNameDisplay">Гость</div>
-                <span style="font-size: 12px; color: var(--text-muted);">Активный аккаунт</span>
-
-                <div class="wb-menu-list">
-                    <div class="wb-menu-item" onclick="openModal('cartModal'); closeModal('profileModal');">
-                        <span>📦 Мои заказы</span>
-                        <span>&rsaquo;</span>
-                    </div>
-                    <div class="wb-menu-item" onclick="openModal('favModal'); closeModal('profileModal');">
-                        <span>❤️ Избранное</span>
-                        <span>&rsaquo;</span>
-                    </div>
-                    <div class="wb-menu-item" onclick="openMainSection('support-page'); closeModal('profileModal');">
-                        <span>💬 Служба поддержки</span>
-                        <span>&rsaquo;</span>
-                    </div>
-                    <div class="wb-menu-item" style="color: #ef4444; border-color: rgba(239,68,68,0.3);" onclick="switchAccount()">
-                        <span>🚪 Выйти / Сменить аккаунт</span>
-                        <span>&rsaquo;</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- МОДАЛЬНОЕ ОКНО ИЗБРАННОГО -->
+    <!-- МОДАЛЬНЫЕ ОКНА (корзина, избранное, детали) -->
     <div class="modal-overlay" id="favModal">
         <div class="modal-card">
-            <div class="modal-header">
-                <h3>❤️ Избранное</h3>
-                <button class="modal-close" onclick="closeModal('favModal')">&times;</button>
-            </div>
+            <div class="modal-header"><h3>❤️ Избранное</h3><button class="modal-close" onclick="closeModal('favModal')">&times;</button></div>
             <div id="favList">Ваш список избранного пуст.</div>
         </div>
     </div>
 
-    <!-- МОДАЛЬНОЕ ОКНО КОРЗИНЫ -->
     <div class="modal-overlay" id="cartModal">
         <div class="modal-card">
-            <div class="modal-header">
-                <h3>🛒 Корзина</h3>
-                <button class="modal-close" onclick="closeModal('cartModal')">&times;</button>
-            </div>
+            <div class="modal-header"><h3>🛒 Корзина</h3><button class="modal-close" onclick="closeModal('cartModal')">&times;</button></div>
             <div id="cartList">Корзина пуста.</div>
-            <div style="margin-top: 15px;" id="cartFooter"></div>
+            <div style="margin-top:15px;" id="cartFooter"></div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="productDetailModal">
+        <div class="modal-card product-modal-card">
+            <div class="modal-header">
+                <h3 id="pmModalTitle">Просмотр позиции</h3>
+                <button class="modal-close" onclick="closeModal('productDetailModal')">&times;</button>
+            </div>
+            <div class="product-modal-grid">
+                <div class="pm-photo-box"><img src="" id="pmImg" alt="Фото товара"></div>
+                <div class="pm-details-box">
+                    <h2 id="pmTitle" style="font-size:22px; font-weight:800;">Название товара</h2>
+                    <!-- Цена заменена на "Цена по запросу" -->
+                    <div class="pm-price" id="pmPrice" style="color:var(--text-muted); font-weight:600;">Цена по запросу</div>
+                    <p class="pm-desc" id="pmDesc">Подробное описание товара и технические характеристики изготовления в лаборатории Омниссия.</p>
+                    <div class="pm-actions" id="pmActions"></div>
+                    <!-- Блок отзывов полностью убран -->
+                </div>
+            </div>
         </div>
     </div>
 
     <script>
-        /* НАСТРОЙКИ TELEGRAM БОТА И ДАННЫЕ */
+        // --- ТЕЛЕГРАМ БОТ ---
         const TELEGRAM_BOT_TOKEN = '8838604936:AAEnnxXO1DHzA1JmQtnpx285FSnUjPEeTls';
         const TELEGRAM_CHAT_ID = '952768157';
 
+        // --- ДАННЫЕ КАТАЛОГОВ (цены удалены, оставлены только названия, картинки, описания) ---
         const categoriesData = {
-            'misc': { title: '3D-Печать: Разное', isShop: true, items: [{ name: 'Подвижный кот', img: 'разное.jpg' }] },
-            'industrial': { title: '3D-Печать: Производственное', isShop: true, items: [{ name: 'Деталь корпуса', img: 'производственное.jpg' }] },
-            'human-full': { title: '3D-Печать: Человек в рост', isShop: true, items: [{ name: 'Макет тела', img: 'человек.jpg' }] },
-            'human-mini': { title: '3D-Печать: Мини фигурка', isShop: true, items: [{ name: 'Мини фигурка', img: 'минифигуркачеловека.jpg' }] },
-            'print-5': { title: '3D-Печать: Раздел 5', isShop: true, items: [] },
-
-            'chess': { title: 'Эпоксидная смола: Шахматы', isShop: true, items: Array.from({length: 10}, (_, i) => ({ name: `Позиция ${i + 1}`, img: '' })) },
-            'resin-2': { title: 'Эпоксидная смола: Раздел 2', isShop: true, items: [] },
-            'resin-3': { title: 'Эпоксидная смола: Раздел 3', isShop: true, items: [] },
-            'resin-4': { title: 'Эпоксидная смола: Раздел 4', isShop: true, items: [] },
-            'resin-5': { title: 'Эпоксидная смола: Раздел 5', isShop: true, items: [] },
-
-            'math-videos': { title: 'Видеоуроки', isShop: false, items: [{ name: 'Видеоурок 1', img: '' }] },
-            'math-cheat': { title: 'Шпоргалки', isShop: false, items: [{ name: 'Шпоргалка 1', img: '' }] },
-            'stage-1': { title: 'Этап 1', isShop: false, items: [{ name: 'Материал этапа 1', img: '' }] },
-            'stage-2': { title: 'Этап 2', isShop: false, items: [{ name: 'Материал этапа 2', img: '' }] },
-            'proj-support': { title: 'Сопровождение проектов', isShop: false, items: [{ name: 'Консультация по проекту', img: 'производственное.jpg' }] },
-            'proj-examples': { title: 'Примеры работ', isShop: false, items: [{ name: 'Пример выполненной работы', img: 'проект.jpg' }] }
+            'misc': {
+                title: '3D-Печать: Разное',
+                isShop: true,
+                groups: [{
+                    groupTitle: 'Коллекция элементов',
+                    items: [
+                        { name: 'Разное 1', img: 'разное1.jpg', desc: 'Коллекционный сувенир с высокой детализацией.' },
+                        { name: 'Разное 2', img: 'разное2.jpg', desc: 'Уникальное печатное изделие под заказ.' },
+                        { name: 'Разное 22', img: 'разное22.jpg', desc: 'Эксклюзивная модель с ручной доработкой.' },
+                        { name: 'Разное 3', img: 'разное3.jpg', desc: 'Кастомный аксессуар для интерьера.' }
+                    ]
+                }]
+            },
+            'industrial': {
+                title: '3D-Печать: Производственное',
+                isShop: true,
+                groups: [
+                    {
+                        groupTitle: 'Детали «Штука»',
+                        items: [
+                            { name: 'Штука 1', img: 'штука1.jpg', desc: 'Промышленный компонент высокой прочности.' },
+                            { name: 'Штука 2', img: 'штука2.jpg', desc: 'Износостойкая инженерная деталь.' }
+                        ]
+                    },
+                    {
+                        groupTitle: 'Компоненты «Кресло»',
+                        items: [
+                            { name: 'Кресло', img: 'кресло.jpg', desc: 'Запасная часть для эргономичного кресла.' },
+                            { name: 'Кресло 2', img: 'кресло2.jpg', desc: 'Усиленный элемент крепления кресла.' }
+                        ]
+                    }
+                ]
+            },
+            'human-full': {
+                title: '3D-Печать: Человек в рост',
+                isShop: true,
+                groups: [{ groupTitle: 'Модели человека', items: [{ name: 'Макет тела в полный рост', img: 'человек.jpg', desc: 'Сборный анатомический или персональный макет в полный рост.' }] }]
+            },
+            'human-mini': {
+                title: '3D-Печать: Мини фигурка',
+                isShop: true,
+                groups: [{ groupTitle: 'Миниатюры', items: [{ name: 'Мини фигурка человека', img: 'минифигуркачеловека.jpg', desc: 'Высокоточная фотополимерная фигурка по фотографии.' }] }]
+            },
+            'print-5': { title: '3D-Печать: Раздел 5', isShop: true, groups: [] },
+            'chess': {
+                title: 'Эпоксидная смола: Шахматы',
+                isShop: true,
+                groups: [{
+                    groupTitle: 'Коллекция шахматных наборов',
+                    items: [
+                        { name: 'Шахматы (Комплект 1)', img: 'шахматы1.jpg', desc: 'Полный авторский комплект шахмат из эпоксидной смолы.' },
+                        { name: 'Шахматы (Фигура)', img: 'шахматы2.jpg', desc: 'Коллекционная шахматная фигура ручной работы.' },
+                        { name: 'Шахматы (Сине-белые)', img: 'шахматы3.jpg', desc: 'Эксклюзивная сине-белая цветовая гамма.' },
+                        { name: 'Шахматы (Красно-белые)', img: 'шахматы4.jpg', desc: 'Дизайнерский комплект с глубоким красным пигментом.' },
+                        { name: 'Шахматы (Сине-золотые)', img: 'шахматы5.jpg', desc: 'Шахматная доска и фигуры с добавлением потали и золотого пигмента.' }
+                    ]
+                }]
+            },
+            'resin-2': { title: 'Эпоксидная смола: Раздел 2', isShop: true, groups: [] },
+            'resin-3': { title: 'Эпоксидная смола: Раздел 3', isShop: true, groups: [] },
+            'resin-4': { title: 'Эпоксидная смола: Раздел 4', isShop: true, groups: [] },
+            'resin-5': { title: 'Эпоксидная смола: Раздел 5', isShop: true, groups: [] },
+            'math-videos': { title: 'Видеоуроки', isShop: false, groups: [{ groupTitle: 'Разбор тем', items: [{ name: 'Видеоурок 1', img: '', desc: 'Видеоурок по решению сложных задач.' }] }] },
+            'math-cheat': { title: 'Шпоргалки', isShop: false, groups: [{ groupTitle: 'Конспекты', items: [{ name: 'Шпоргалка 1', img: '', desc: 'Сборник формул и методических указаний.' }] }] },
+            'stage-1': { title: 'Этап 1', isShop: false, groups: [{ groupTitle: 'Материалы', items: [{ name: 'Материал этапа 1', img: '', desc: 'Базовый курс изучения.' }] }] },
+            'stage-2': { title: 'Этап 2', isShop: false, groups: [{ groupTitle: 'Материалы', items: [{ name: 'Материал этапа 2', img: '', desc: 'Углубленные задания.' }] }] },
+            'proj-support': { title: 'Сопровождение проектов', isShop: false, groups: [{ groupTitle: 'Авиамоделирование и сопровождение', items: [{ name: 'Сопровождение модели самолета', img: 'самолет.jpg', desc: 'Полный цикл кураторства от идеи до запуска.' }] }] },
+            'proj-examples': { title: 'Примеры работ', isShop: false, groups: [{ groupTitle: 'Галерея проектов', items: [{ name: 'Пример готовой модели самолета', img: 'самолет.jpg', desc: 'Готовый рабочий проект летательного аппарата.' }] }] }
         };
 
         let currentMainPage = 'print-page';
-        let currentUser = localStorage.getItem('cosmos_active_user') || '';
         let selectedFile = null;
 
-        /* МЕНЕДЖЕР ПОЛЬЗОВАТЕЛЕЙ (LOCALSTORAGE) */
-        function getUserProfile(username) {
-            if (!username) return null;
-            const raw = localStorage.getItem('cosmos_user_' + username.toLowerCase());
+        // --- РАБОТА С ГЛОБАЛЬНЫМИ ДАННЫМИ (без пользователя) ---
+        function getGlobalData() {
+            const raw = localStorage.getItem('omnissia_global_data');
             if (raw) return JSON.parse(raw);
             return {
-                name: username,
-                avatar: 'https://via.placeholder.com/100',
                 favorites: [],
                 cart: [],
-                chatHistory: [
-                    { sender: 'support', text: `Здравствуйте, ${username}! Чем мы можем вам помочь? Опишите ваш вопрос или прикрепите фото.`, img: null, time: getCurrentTime() }
-                ]
+                orders: [], // массив оформленных заказов [{items: [...], date: строка}]
+                chatHistory: [{ sender: 'support', text: 'Здравствуйте! Чем лаборатория Омниссия может вам помочь?', img: null, time: getCurrentTime() }]
             };
         }
 
-        function saveUserProfile(data) {
-            if (!currentUser) return;
-            localStorage.setItem('cosmos_user_' + currentUser.toLowerCase(), JSON.stringify(data));
+        function saveGlobalData(data) {
+            localStorage.setItem('omnissia_global_data', JSON.stringify(data));
         }
 
         function getCurrentTime() {
             return new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
         }
 
-        /* АВТОРИЗАЦИЯ И СМЕНА АККАУНТА */
-        function handleProfileClick() {
-            if (!currentUser) {
-                openModal('authModal');
-            } else {
-                openModal('profileModal');
-            }
-        }
-
-        function performLogin() {
-            const val = document.getElementById('authLoginInput').value.trim();
-            if (!val) { alert('Пожалуйста, введите логин!'); return; }
-            currentUser = val;
-            localStorage.setItem('cosmos_active_user', currentUser);
-            closeModal('authModal');
-            document.getElementById('authLoginInput').value = '';
-            initUserSession();
-        }
-
-        function switchAccount() {
-            closeModal('profileModal');
-            openModal('authModal');
-        }
-
-        function initUserSession() {
-            if (!currentUser) {
-                document.getElementById('headerUserName').innerText = 'Войти';
-                document.getElementById('favCount').innerText = '0';
-                document.getElementById('cartCount').innerText = '0';
-                return;
-            }
-
-            const profile = getUserProfile(currentUser);
-            document.getElementById('headerUserName').innerText = profile.name;
-            document.getElementById('profileNameDisplay').innerText = profile.name;
-            document.getElementById('userAvatar').src = profile.avatar || 'https://via.placeholder.com/100';
-
-            updateBadges();
-            renderSupportChat();
-        }
-
-        /* НАВИГАЦИЯ */
+        // --- НАВИГАЦИЯ ---
         function openMainSection(pageId) {
             currentMainPage = pageId;
             document.querySelectorAll('.section-page').forEach(p => p.classList.remove('active'));
             document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.mobile-tab-item').forEach(m => m.classList.remove('active'));
 
             document.getElementById(pageId).classList.add('active');
-            
-            let activeBtn = null;
-            if(pageId === 'print-page') activeBtn = document.getElementById('btn-print');
-            if(pageId === 'resin-page') activeBtn = document.getElementById('btn-resin');
-            if(pageId === 'math-proj-page') activeBtn = document.getElementById('btn-math-proj');
-            if(pageId === 'support-page') activeBtn = document.getElementById('btn-support');
 
-            if (activeBtn) {
-                activeBtn.classList.add('active');
-                activeBtn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+            const map = {
+                'print-page': 'btn-print',
+                'resin-page': 'btn-resin',
+                'math-proj-page': 'btn-math-proj',
+                'support-page': 'btn-support',
+                'contacts-page': 'btn-contacts'
+            };
+            const btnId = map[pageId];
+            if (btnId) {
+                const btn = document.getElementById(btnId);
+                if (btn) btn.classList.add('active');
+            }
+
+            const mMap = {
+                'print-page': 'mtab-print',
+                'resin-page': 'mtab-resin',
+                'math-proj-page': 'mtab-math-proj',
+                'support-page': 'mtab-support',
+                'contacts-page': 'mtab-contacts'
+            };
+            const mId = mMap[pageId];
+            if (mId) {
+                const mBtn = document.getElementById(mId);
+                if (mBtn) mBtn.classList.add('active');
             }
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
+        // --- КАТАЛОГИ ---
         function openCategoryPage(catKey) {
             const data = categoriesData[catKey];
             if (!data) return;
-
             document.getElementById('cat-title').innerText = data.title;
-            const grid = document.getElementById('cat-products-grid');
+            const container = document.getElementById('cat-products-container');
+            const global = getGlobalData();
 
-            const profile = currentUser ? getUserProfile(currentUser) : { favorites: [], cart: [] };
-
-            if (data.items.length === 0) {
-                grid.innerHTML = '<div style="color: var(--text-muted);">Раздел пока пуст. Скоро здесь появятся товары.</div>';
+            if (!data.groups || data.groups.length === 0) {
+                container.innerHTML = '<div style="color: var(--text-muted);">Раздел пока пуст. Скоро здесь появятся товары.</div>';
             } else {
-                grid.innerHTML = data.items.map(item => {
-                    const isFav = profile.favorites.includes(item.name);
-                    const isCart = profile.cart.includes(item.name);
-                    
-                    return `
-                        <div class="category-card">
-                            <div class="preview-box">
-                                ${item.img ? `<img src="${item.img}" class="preview-img">` : 'Без фото'}
-                            </div>
-                            <div class="card-body">
-                                <div class="card-title">${item.name}</div>
-                                <div class="card-actions" style="margin-top:auto;">
-                                    <button class="btn-view" onclick="alert('Детали товара ${item.name}')">Просмотр</button>
-                                    ${data.isShop ? `
-                                        <button class="btn-fav ${isFav ? 'active' : ''}" onclick="toggleFav('${item.name}')">❤️</button>
-                                        <button class="btn-cart" onclick="toggleCart('${item.name}')">${isCart ? '✓' : '🛒'}</button>
-                                    ` : ''}
+                container.innerHTML = data.groups.map(group => `
+                    <div class="sub-group-title">${group.groupTitle}</div>
+                    <div class="products-grid">
+                        ${group.items.map(item => {
+                            const isFav = global.favorites.includes(item.name);
+                            const isCart = global.cart.includes(item.name);
+                            return `
+                                <div class="category-card">
+                                    <div class="preview-box">
+                                        ${item.img ? `<img src="${item.img}" class="preview-img">` : 'Без фото'}
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="card-title">${item.name}</div>
+                                        <div class="card-desc">${item.desc || 'Описание готовится...'}</div>
+                                        <div class="card-actions">
+                                            <button class="btn-view" onclick="openProductModal('${catKey}', '${item.name}')">Просмотр</button>
+                                            ${data.isShop ? `
+                                                <button class="btn-fav ${isFav ? 'active' : ''}" onclick="toggleFav('${item.name}', '${catKey}')">❤️</button>
+                                                <button class="btn-cart" onclick="toggleCart('${item.name}', '${catKey}')">${isCart ? '✓' : '🛒'}</button>
+                                            ` : ''}
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
-                        </div>
-                    `;
-                }).join('');
+                            `;
+                        }).join('')}
+                    </div>
+                `).join('');
             }
 
             document.querySelectorAll('.section-page').forEach(p => p.classList.remove('active'));
@@ -1114,100 +772,127 @@
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
+        function openProductModal(catKey, itemName) {
+            const cat = categoriesData[catKey];
+            if (!cat) return;
+            let foundItem = null;
+            for (let g of cat.groups) {
+                let match = g.items.find(i => i.name === itemName);
+                if (match) { foundItem = match; break; }
+            }
+            if (!foundItem) return;
+
+            document.getElementById('pmTitle').innerText = foundItem.name;
+            // Цена не отображается – оставляем статичный текст "Цена по запросу"
+            document.getElementById('pmDesc').innerText = foundItem.desc || 'Индивидуальное изготовление и высокое качество гарантированы.';
+            document.getElementById('pmImg').src = foundItem.img || 'https://via.placeholder.com/400?text=Лаборатория+Омниссия';
+
+            const global = getGlobalData();
+            const isFav = global.favorites.includes(foundItem.name);
+            const isCart = global.cart.includes(foundItem.name);
+
+            document.getElementById('pmActions').innerHTML = `
+                <button class="btn-view" style="padding:12px;" onclick="toggleCart('${foundItem.name}', '${catKey}'); openProductModal('${catKey}', '${foundItem.name}');">
+                    ${isCart ? '✓ В корзине' : '🛒 Положить в корзину'}
+                </button>
+                <button class="btn-fav ${isFav ? 'active' : ''}" style="padding:12px;" onclick="toggleFav('${foundItem.name}', '${catKey}'); openProductModal('${catKey}', '${foundItem.name}');">
+                    ❤️
+                </button>
+            `;
+            openModal('productDetailModal');
+        }
+
         function goBackToMain() { openMainSection(currentMainPage); }
 
-        /* ИЗБРАННОЕ И КОРЗИНА */
-        function toggleFav(itemName) {
-            if (!currentUser) { openModal('authModal'); return; }
-            const profile = getUserProfile(currentUser);
-            if (profile.favorites.includes(itemName)) {
-                profile.favorites = profile.favorites.filter(i => i !== itemName);
+        // --- ИЗБРАННОЕ И КОРЗИНА (глобальные) ---
+        function toggleFav(itemName, currentCatKey) {
+            const global = getGlobalData();
+            if (global.favorites.includes(itemName)) {
+                global.favorites = global.favorites.filter(i => i !== itemName);
             } else {
-                profile.favorites.push(itemName);
+                global.favorites.push(itemName);
             }
-            saveUserProfile(profile);
-            updateBadges();
-            updateModalLists();
-            if (document.getElementById('category-detail-page').classList.contains('active')) {
-                // Обновляем иконку
+            saveGlobalData(global);
+            updateBadgesAndLists();
+            if (currentCatKey && document.getElementById('category-detail-page').classList.contains('active')) {
+                openCategoryPage(currentCatKey);
             }
         }
 
-        function toggleCart(itemName) {
-            if (!currentUser) { openModal('authModal'); return; }
-            const profile = getUserProfile(currentUser);
-            if (profile.cart.includes(itemName)) {
-                profile.cart = profile.cart.filter(i => i !== itemName);
+        function toggleCart(itemName, currentCatKey) {
+            const global = getGlobalData();
+            if (global.cart.includes(itemName)) {
+                global.cart = global.cart.filter(i => i !== itemName);
             } else {
-                profile.cart.push(itemName);
+                global.cart.push(itemName);
             }
-            saveUserProfile(profile);
-            updateBadges();
-            updateModalLists();
+            saveGlobalData(global);
+            updateBadgesAndLists();
+            if (currentCatKey && document.getElementById('category-detail-page').classList.contains('active')) {
+                openCategoryPage(currentCatKey);
+            }
         }
 
-        function updateBadges() {
-            if (!currentUser) return;
-            const profile = getUserProfile(currentUser);
-            document.getElementById('favCount').innerText = profile.favorites.length;
-            document.getElementById('cartCount').innerText = profile.cart.length;
-        }
-
-        function updateModalLists() {
-            if (!currentUser) return;
-            const profile = getUserProfile(currentUser);
+        function updateBadgesAndLists() {
+            const global = getGlobalData();
+            document.getElementById('favCount').innerText = global.favorites.length;
+            document.getElementById('cartCount').innerText = global.cart.length;
 
             const favList = document.getElementById('favList');
-            favList.innerHTML = profile.favorites.length ? profile.favorites.map(i => `<div class="modal-item-row"><span>${i}</span><button class="modal-close" onclick="toggleFav('${i}')">&times;</button></div>`).join('') : 'Ваш список избранного пуст.';
+            favList.innerHTML = global.favorites.length ? global.favorites.map(i => `<div class="modal-item-row"><span>${i}</span><button class="modal-close" onclick="toggleFav('${i}')">&times;</button></div>`).join('') : 'Ваш список избранного пуст.';
 
             const cartList = document.getElementById('cartList');
-            cartList.innerHTML = profile.cart.length ? profile.cart.map(i => `<div class="modal-item-row"><span>${i}</span><button class="modal-close" onclick="toggleCart('${i}')">&times;</button></div>`).join('') : 'Корзина пуста.';
-            
-            document.getElementById('cartFooter').innerHTML = profile.cart.length ? `<button class="btn-view" onclick="alert('Заказ оформлен!')">Оформить заказ (${profile.cart.length})</button>` : '';
-        }
-
-        function openModal(id) {
-            if (id === 'profileModal' && !currentUser) { openModal('authModal'); return; }
-            updateModalLists();
-            document.getElementById(id).classList.add('active');
-        }
-
-        function closeModal(id) {
-            document.getElementById(id).classList.remove('active');
-        }
-
-        function loadAvatar(event) {
-            if (!currentUser) return;
-            const file = event.target.files[0];
-            if (!file) return;
-
-            const reader = new FileReader();
-            reader.onload = function() {
-                const profile = getUserProfile(currentUser);
-                profile.avatar = reader.result;
-                saveUserProfile(profile);
-                document.getElementById('userAvatar').src = reader.result;
+            if (global.cart.length) {
+                cartList.innerHTML = global.cart.map(i => `<div class="modal-item-row"><span>${i}</span><button class="modal-close" onclick="toggleCart('${i}')">&times;</button></div>`).join('');
+                document.getElementById('cartFooter').innerHTML = `<button class="btn-view" onclick="placeOrder()">Оформить заказ (${global.cart.length})</button>`;
+            } else {
+                cartList.innerHTML = 'Корзина пуста.';
+                document.getElementById('cartFooter').innerHTML = '';
             }
-            reader.readAsDataURL(file);
         }
 
-        /* СТРАНИЦА ПОДДЕРЖКИ С ФОТОГРАФИЯМИ И TELEGRAM БОТОМ */
+        // --- ОФОРМЛЕНИЕ ЗАКАЗА (без цен) ---
+        function placeOrder() {
+            const global = getGlobalData();
+            if (global.cart.length === 0) return;
+
+            const order = {
+                items: [...global.cart],
+                date: new Date().toLocaleString()
+            };
+            if (!global.orders) global.orders = [];
+            global.orders.push(order);
+            global.cart = [];
+            saveGlobalData(global);
+            updateBadgesAndLists();
+            alert('Заказ оформлен! Менеджер свяжется с вами для уточнения стоимости.');
+
+            // Отправляем в Telegram (без суммы)
+            sendOrderToTelegram(order);
+        }
+
+        async function sendOrderToTelegram(order) {
+            try {
+                const text = `📦 НОВЫЙ ЗАКАЗ (Аноним)\nТовары: ${order.items.join(', ')}\nДата: ${order.date}\nЦена: по запросу`;
+                await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ chat_id: TELEGRAM_CHAT_ID, text: text })
+                });
+            } catch (e) { console.error('Ошибка отправки заказа в Telegram', e); }
+        }
+
+        // --- ЧАТ ПОДДЕРЖКИ ---
         function renderSupportChat() {
             const list = document.getElementById('supportMessagesList');
-            if (!currentUser) {
-                list.innerHTML = `<div class="chat-bubble support">Пожалуйста, войдите в аккаунт, чтобы сохранять историю переписки.</div>`;
-                return;
-            }
-
-            const profile = getUserProfile(currentUser);
-            list.innerHTML = profile.chatHistory.map(msg => `
+            const global = getGlobalData();
+            list.innerHTML = global.chatHistory.map(msg => `
                 <div class="chat-bubble ${msg.sender}">
                     ${msg.text ? `<div>${msg.text}</div>` : ''}
                     ${msg.img ? `<img src="${msg.img}" class="chat-img-preview-msg">` : ''}
                     <div class="chat-time">${msg.time}</div>
                 </div>
             `).join('');
-
             list.scrollTop = list.scrollHeight;
         }
 
@@ -1215,7 +900,6 @@
             const file = event.target.files[0];
             if (!file) return;
             selectedFile = file;
-
             const reader = new FileReader();
             reader.onload = function(e) {
                 document.getElementById('attachmentPreviewImg').src = e.target.result;
@@ -1232,61 +916,42 @@
         }
 
         async function sendSupportMessage() {
-            if (!currentUser) { openModal('authModal'); return; }
-
             const input = document.getElementById('supportInput');
             const text = input.value.trim();
-
             if (!text && !selectedFile) return;
 
-            const profile = getUserProfile(currentUser);
+            const global = getGlobalData();
             let imgDataUrl = null;
-
             if (selectedFile) {
                 imgDataUrl = document.getElementById('attachmentPreviewImg').src;
             }
 
-            // 1. Сохраняем локально в историю профиля
-            profile.chatHistory.push({
+            global.chatHistory.push({
                 sender: 'user',
                 text: text,
                 img: imgDataUrl,
                 time: getCurrentTime()
             });
-
-            saveUserProfile(profile);
+            saveGlobalData(global);
             renderSupportChat();
 
-            // Сброс полей ввода
             input.value = '';
             const tempFile = selectedFile;
             cancelAttachment();
 
-            // 2. Отправка в Telegram через бота
-            sendToTelegramBot(text, tempFile);
+            let ordersInfo = '';
+            if (global.orders && global.orders.length > 0) {
+                const lastOrder = global.orders[global.orders.length - 1];
+                ordersInfo = `\nПоследний заказ: ${lastOrder.items.join(', ')} (цена по запросу) от ${lastOrder.date}`;
+            }
+            const fullText = `💬 Сообщение от [Аноним]${ordersInfo}\n${text || 'Прикреплено фото'}`;
 
-            // 3. Авто-ответ в чате
-            setTimeout(() => {
-                const updatedProfile = getUserProfile(currentUser);
-                updatedProfile.chatHistory.push({
-                    sender: 'support',
-                    text: 'Сообщение доставлено менеджеру! Мы ответим вам в ближайшее время.',
-                    img: null,
-                    time: getCurrentTime()
-                });
-                saveUserProfile(updatedProfile);
-                renderSupportChat();
-            }, 1200);
-        }
-
-        async function sendToTelegramBot(text, file) {
             try {
-                if (file) {
+                if (tempFile) {
                     const formData = new FormData();
                     formData.append('chat_id', TELEGRAM_CHAT_ID);
-                    formData.append('photo', file);
-                    formData.append('caption', `💬 Сообщение от [${currentUser}]:\n${text || 'Прикреплено фото'}`);
-
+                    formData.append('photo', tempFile);
+                    formData.append('caption', fullText);
                     await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendPhoto`, {
                         method: 'POST',
                         body: formData
@@ -1295,81 +960,70 @@
                     await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            chat_id: TELEGRAM_CHAT_ID,
-                            text: `💬 Сообщение от [${currentUser}]:\n${text}`
-                        })
+                        body: JSON.stringify({ chat_id: TELEGRAM_CHAT_ID, text: fullText })
                     });
                 }
-            } catch (err) {
-                console.error('Ошибка отправки в Telegram:', err);
-            }
+            } catch (err) { console.error('Ошибка отправки в Telegram:', err); }
+
+            setTimeout(() => {
+                const updated = getGlobalData();
+                updated.chatHistory.push({
+                    sender: 'support',
+                    text: 'Сообщение доставлено менеджеру! Мы ответим вам в ближайшее время.',
+                    img: null,
+                    time: getCurrentTime()
+                });
+                saveGlobalData(updated);
+                renderSupportChat();
+            }, 1200);
         }
 
-        /* ТЕМА И КАНВАС */
-        let isDarkTheme = true;
-        function toggleTheme() {
-            isDarkTheme = !isDarkTheme;
-            document.documentElement.setAttribute('data-theme', isDarkTheme ? 'dark' : 'light');
-            document.getElementById('themeBtn').innerText = isDarkTheme ? '☀️' : '🌙';
+        // --- МОДАЛЬНЫЕ ОКНА ---
+        function openModal(id) {
+            updateBadgesAndLists();
+            document.getElementById(id).classList.add('active');
         }
 
+        function closeModal(id) {
+            document.getElementById(id).classList.remove('active');
+        }
+
+        // --- ФОН-КАНВАС (лёгкое облачко) ---
         const canvas = document.getElementById('themeCanvas');
         const ctx = canvas.getContext('2d');
-        function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
         window.addEventListener('resize', resizeCanvas);
         resizeCanvas();
 
-        const stars = Array.from({length: 90}, () => ({
-            x: Math.random() * canvas.width, y: Math.random() * canvas.height,
-            radius: Math.random() * 1.5, alpha: Math.random(), speed: Math.random() * 0.02 + 0.005
-        }));
-
-        const clouds = Array.from({length: 5}, () => ({
+        const clouds = Array.from({ length: 6 }, () => ({
             x: Math.random() * canvas.width,
-            y: Math.random() * (canvas.height * 0.4),
-            speed: Math.random() * 0.5 + 0.2,
-            radius: Math.random() * 40 + 30
+            y: Math.random() * (canvas.height * 0.4) + 20,
+            speed: Math.random() * 0.4 + 0.15,
+            radius: Math.random() * 50 + 30
         }));
 
         function drawScene() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            
-            if (isDarkTheme) {
-                stars.forEach(s => {
-                    s.alpha += s.speed;
-                    if (s.alpha > 1 || s.alpha < 0) s.speed = -s.speed;
-                    ctx.beginPath();
-                    ctx.arc(s.x, s.y, s.radius, 0, Math.PI * 2);
-                    ctx.fillStyle = `rgba(255, 255, 255, ${Math.abs(s.alpha)})`;
-                    ctx.fill();
-                });
-            } else {
+            clouds.forEach(c => {
+                c.x += c.speed;
+                if (c.x - c.radius > canvas.width) c.x = -c.radius * 2;
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
                 ctx.beginPath();
-                ctx.arc(100, 100, 48, 0, Math.PI * 2);
-                ctx.fillStyle = 'rgba(255, 215, 0, 0.9)';
-                ctx.shadowColor = 'rgba(255, 215, 0, 0.6)';
-                ctx.shadowBlur = 45;
+                ctx.arc(c.x, c.y, c.radius, 0, Math.PI * 2);
+                ctx.arc(c.x + c.radius * 0.7, c.y - c.radius * 0.2, c.radius * 0.7, 0, Math.PI * 2);
+                ctx.arc(c.x + c.radius * 1.3, c.y, c.radius * 0.8, 0, Math.PI * 2);
                 ctx.fill();
-                ctx.shadowBlur = 0;
-
-                clouds.forEach(c => {
-                    c.x += c.speed;
-                    if (c.x - c.radius > canvas.width) c.x = -c.radius * 2;
-
-                    ctx.fillStyle = 'rgba(255, 255, 255, 0.75)';
-                    ctx.beginPath();
-                    ctx.arc(c.x, c.y, c.radius, 0, Math.PI * 2);
-                    ctx.arc(c.x + c.radius * 0.6, c.y - c.radius * 0.2, c.radius * 0.7, 0, Math.PI * 2);
-                    ctx.arc(c.x + c.radius * 1.2, c.y, c.radius * 0.8, 0, Math.PI * 2);
-                    ctx.fill();
-                });
-            }
+            });
             requestAnimationFrame(drawScene);
         }
 
-        // Старт сессии
-        initUserSession();
+        // Инициализация
+        updateBadgesAndLists();
+        renderSupportChat();
         drawScene();
     </script>
 </body>
